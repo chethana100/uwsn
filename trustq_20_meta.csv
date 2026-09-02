@@ -1,0 +1,2 @@
+app_packets_sent,packet_size_bytes,sim_duration,total_energy_consumed_J
+950,80,3000,145639

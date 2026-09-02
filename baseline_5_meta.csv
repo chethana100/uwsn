@@ -1,0 +1,2 @@
+run,app_packets_sent,num_sources,traffic_start,traffic_stop,sim_duration,packet_size_bytes,total_energy_consumed_J,sources
+5,950,10,2,2900,3000,80,148891,"4 57 9 71 85 8 72 95 91 78"

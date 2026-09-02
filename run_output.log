@@ -1,0 +1,15 @@
+--- Initializing Paper-Matched HH-VBF Baseline (static, no mobility) ---
+Configured packet rate: 0.01 packets/sec (target was 0.01 packets/sec)
+Randomly selected source nodes (traffic generators):
+  Node 72
+  Node 76
+  Node 57
+  Node 22
+  Node 88
+  Node 67
+  Node 2
+  Node 10
+  Node 20
+  Node 89
+Network configured. Trace file 'uwsn-paper-baseline.tr' and animation 'uwsn-paper-animation.xml' will be generated.
+Sink fixed at (1500, 1500, 0)

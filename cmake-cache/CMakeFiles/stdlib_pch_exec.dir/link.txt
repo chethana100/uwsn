@@ -1,0 +1,1 @@
+/usr/bin/c++ -g "CMakeFiles/stdlib_pch_exec.dir/build-support/empty-main.cc.o" -o ns3.41-stdlib_pch_exec-debug   -L/home/chethana/ns-allinone-3.41/ns-3.41/build/lib

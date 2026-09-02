@@ -1,0 +1,5 @@
+arm,run,app_packets_sent,uids_transmitted,delivered,pdr,pdr_old_method,avg_delay_s,min_delay_s,max_delay_s,throughput_bps,energy_consumed_J
+trustqmob,1,950,949,670,70.5263,70.6006,1.668554,0.34,4.991,142.9333,141556.0
+trustqmob,1,950,949,670,70.5263,70.6006,1.668554,0.34,4.991,142.9333,141556.0
+trustqmob,1,950,949,670,70.5263,70.6006,1.668554,0.34,4.991,142.9333,141556.0
+trustqmob,1,950,949,670,70.5263,70.6006,1.668554,0.34,4.991,142.9333,141556.0
