@@ -1,0 +1,2 @@
+app_packets_sent,packet_size_bytes,sim_duration,total_energy_consumed_J,num_sources,sources,attacker_fraction,drop_probability,num_malicious,malicious_nodes
+950,80,3000,143821,10,"2 9 31 35 37 45 49 50 85 90",0.2,1,20,"2 6 7 10 17 19 22 27 40 44 49 51 57 68 71 73 75 81 87 95"

@@ -11,6 +11,7 @@ set(OLD_GLOB
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/scratch-simulator.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/subdir"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-phase1-baseline.cc"
+  "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-attack.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-baseline.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq.cc"
   )
@@ -41,6 +42,7 @@ set(OLD_GLOB
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/mcm-velocity-check.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/scratch-simulator.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-phase1-baseline.cc"
+  "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-attack.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-baseline.cc"
   "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq.cc"
   )

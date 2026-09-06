@@ -1,0 +1,2 @@
+arm,run,app_packets_sent,uids_transmitted,delivered,pdr,pdr_old_method,avg_delay_s,min_delay_s,max_delay_s,throughput_bps,energy_consumed_J
+atk_test,1,950,948,598,62.9474,63.0802,1.752443,0.34,5.3444,127.5733,135406.0

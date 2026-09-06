@@ -9871,6 +9871,12 @@
 },
 {
   "directory": "/home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch",
+  "command": "/usr/bin/c++ -DHAVE_PACKET_H -DNS3_ASSERT_ENABLE -DNS3_BUILD_PROFILE_DEBUG -DNS3_LOG_ENABLE -DPROJECT_SOURCE_PATH=\\\"/home/chethana/ns-allinone-3.41/ns-3.41\\\" -DRAW_SOCK_CREATOR=\\\"/home/chethana/ns-allinone-3.41/ns-3.41/build/src/fd-net-device/ns3.41-raw-sock-creator-debug\\\" -DTAP_DEV_CREATOR=\\\"/home/chethana/ns-allinone-3.41/ns-3.41/build/src/fd-net-device/ns3.41-tap-device-creator-debug\\\" -D__LINUX__ -I/home/chethana/ns-allinone-3.41/ns-3.41/build/include -g -std=c++20 -fPIE   -fno-semantic-interposition -fdiagnostics-color=always -Wall -Winvalid-pch -include /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx -o CMakeFiles/scratch_uwsn-trustq-attack.dir/uwsn-trustq-attack.cc.o -c /home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-attack.cc",
+  "file": "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-attack.cc",
+  "output": "scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/uwsn-trustq-attack.cc.o"
+},
+{
+  "directory": "/home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch",
   "command": "/usr/bin/c++ -DHAVE_PACKET_H -DNS3_ASSERT_ENABLE -DNS3_BUILD_PROFILE_DEBUG -DNS3_LOG_ENABLE -DPROJECT_SOURCE_PATH=\\\"/home/chethana/ns-allinone-3.41/ns-3.41\\\" -DRAW_SOCK_CREATOR=\\\"/home/chethana/ns-allinone-3.41/ns-3.41/build/src/fd-net-device/ns3.41-raw-sock-creator-debug\\\" -DTAP_DEV_CREATOR=\\\"/home/chethana/ns-allinone-3.41/ns-3.41/build/src/fd-net-device/ns3.41-tap-device-creator-debug\\\" -D__LINUX__ -I/home/chethana/ns-allinone-3.41/ns-3.41/build/include -g -std=c++20 -fPIE   -fno-semantic-interposition -fdiagnostics-color=always -Wall -Winvalid-pch -include /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx -o CMakeFiles/scratch_uwsn-trustq-baseline.dir/uwsn-trustq-baseline.cc.o -c /home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-baseline.cc",
   "file": "/home/chethana/ns-allinone-3.41/ns-3.41/scratch/uwsn-trustq-baseline.cc",
   "output": "scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir/uwsn-trustq-baseline.cc.o"

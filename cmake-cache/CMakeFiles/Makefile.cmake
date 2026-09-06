@@ -801,6 +801,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "scratch/CMakeFiles/scratch_mcm-velocity-check.dir/DependInfo.cmake"
   "scratch/CMakeFiles/scratch_scratch-simulator.dir/DependInfo.cmake"
   "scratch/CMakeFiles/scratch_uwsn-phase1-baseline.dir/DependInfo.cmake"
+  "scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/DependInfo.cmake"
   "scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir/DependInfo.cmake"
   "scratch/CMakeFiles/scratch_uwsn-trustq.dir/DependInfo.cmake"
   "scratch/CMakeFiles/scratch_subdir_scratch-subdir.dir/DependInfo.cmake"

@@ -1127,6 +1127,7 @@
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_mcm-velocity-check.dir
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_scratch-simulator.dir
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_uwsn-phase1-baseline.dir
+/home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_uwsn-trustq.dir
 /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache/scratch/CMakeFiles/scratch_subdir_scratch-subdir.dir

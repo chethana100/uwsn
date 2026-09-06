@@ -215,6 +215,20 @@ scratch_uwsn-phase1-baseline/fast:
 .PHONY : scratch_uwsn-phase1-baseline/fast
 
 # Convenience name for target.
+scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/rule:
+	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/rule
+.PHONY : scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/rule
+
+# Convenience name for target.
+scratch_uwsn-trustq-attack: scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/rule
+.PHONY : scratch_uwsn-trustq-attack
+
+# fast build rule for target.
+scratch_uwsn-trustq-attack/fast:
+	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build.make scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build
+.PHONY : scratch_uwsn-trustq-attack/fast
+
+# Convenience name for target.
 scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir/rule:
 	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir/rule
 .PHONY : scratch/CMakeFiles/scratch_uwsn-trustq-baseline.dir/rule
@@ -376,6 +390,30 @@ uwsn-phase1-baseline.cc.s:
 	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-phase1-baseline.dir/build.make scratch/CMakeFiles/scratch_uwsn-phase1-baseline.dir/uwsn-phase1-baseline.cc.s
 .PHONY : uwsn-phase1-baseline.cc.s
 
+uwsn-trustq-attack.o: uwsn-trustq-attack.cc.o
+.PHONY : uwsn-trustq-attack.o
+
+# target to build an object file
+uwsn-trustq-attack.cc.o:
+	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build.make scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/uwsn-trustq-attack.cc.o
+.PHONY : uwsn-trustq-attack.cc.o
+
+uwsn-trustq-attack.i: uwsn-trustq-attack.cc.i
+.PHONY : uwsn-trustq-attack.i
+
+# target to preprocess a source file
+uwsn-trustq-attack.cc.i:
+	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build.make scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/uwsn-trustq-attack.cc.i
+.PHONY : uwsn-trustq-attack.cc.i
+
+uwsn-trustq-attack.s: uwsn-trustq-attack.cc.s
+.PHONY : uwsn-trustq-attack.s
+
+# target to generate assembly for a file
+uwsn-trustq-attack.cc.s:
+	cd /home/chethana/ns-allinone-3.41/ns-3.41/cmake-cache && $(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build.make scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/uwsn-trustq-attack.cc.s
+.PHONY : uwsn-trustq-attack.cc.s
+
 uwsn-trustq-baseline.o: uwsn-trustq-baseline.cc.o
 .PHONY : uwsn-trustq-baseline.o
 
@@ -442,6 +480,7 @@ help:
 	@echo "... scratch_subdir_scratch-subdir"
 	@echo "... scratch_uwsn-phase1-baseline"
 	@echo "... scratch_uwsn-trustq"
+	@echo "... scratch_uwsn-trustq-attack"
 	@echo "... scratch_uwsn-trustq-baseline"
 	@echo "... mcm-velocity-check.o"
 	@echo "... mcm-velocity-check.i"
@@ -458,6 +497,9 @@ help:
 	@echo "... uwsn-phase1-baseline.o"
 	@echo "... uwsn-phase1-baseline.i"
 	@echo "... uwsn-phase1-baseline.s"
+	@echo "... uwsn-trustq-attack.o"
+	@echo "... uwsn-trustq-attack.i"
+	@echo "... uwsn-trustq-attack.s"
 	@echo "... uwsn-trustq-baseline.o"
 	@echo "... uwsn-trustq-baseline.i"
 	@echo "... uwsn-trustq-baseline.s"

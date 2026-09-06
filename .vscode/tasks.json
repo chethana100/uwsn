@@ -20,6 +20,21 @@
                 "kind": "test",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Watch and push Git changes",
+            "type": "shell",
+            "command": "bash .vscode/watch-and-push.sh",
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen",
+                "instanceLimit": 1
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false
+            }
         }
     ]
 }

@@ -1,0 +1,4 @@
+arm,run,app_packets_sent,uids_transmitted,delivered,pdr,pdr_old_method,avg_delay_s,min_delay_s,max_delay_s,throughput_bps,energy_consumed_J
+attack20pct,1,950,948,598,62.9474,63.0802,1.752443,0.34,5.3444,127.5733,135406.0
+attack20pct_v3,1,950,948,598,62.9474,63.0802,1.752443,0.34,5.3444,127.5733,135406.0
+noattack,1,950,948,599,63.0526,63.1857,1.795134,0.34,5.27,127.7867,139466.0

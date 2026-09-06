@@ -6114,6 +6114,19 @@ scratch_uwsn-phase1-baseline/fast:
 .PHONY : scratch_uwsn-phase1-baseline/fast
 
 #=============================================================================
+# Target rules for targets named scratch_uwsn-trustq-attack
+
+# Build rule for target.
+scratch_uwsn-trustq-attack: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scratch_uwsn-trustq-attack
+.PHONY : scratch_uwsn-trustq-attack
+
+# fast build rule for target.
+scratch_uwsn-trustq-attack/fast:
+	$(MAKE) $(MAKESILENT) -f scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build.make scratch/CMakeFiles/scratch_uwsn-trustq-attack.dir/build
+.PHONY : scratch_uwsn-trustq-attack/fast
+
+#=============================================================================
 # Target rules for targets named scratch_uwsn-trustq-baseline
 
 # Build rule for target.
@@ -6676,6 +6689,7 @@ help:
 	@echo "... scratch_subdir_scratch-subdir"
 	@echo "... scratch_uwsn-phase1-baseline"
 	@echo "... scratch_uwsn-trustq"
+	@echo "... scratch_uwsn-trustq-attack"
 	@echo "... scratch_uwsn-trustq-baseline"
 	@echo "... second"
 	@echo "... seventh"
