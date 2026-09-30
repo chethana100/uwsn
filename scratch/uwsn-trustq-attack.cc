@@ -13,6 +13,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/aqua-sim-ng-module.h"
 #include "ns3/applications-module.h"
+#include "mcm-mobility-model.h"
 
 #include <vector>
 #include <algorithm>
@@ -112,6 +113,8 @@ int main (int argc, char *argv[])
   double priorityScale = -1.0;
   double attackerFraction = 0.0;
   double dropProbability = 0.0;
+  bool adversarialMotion = false;
+  bool pactEnabled = false;
 
   CommandLine cmd;
   cmd.AddValue ("run", "Run number (varies RNG seeds and output filenames)", runNumber);
@@ -119,6 +122,8 @@ int main (int argc, char *argv[])
   cmd.AddValue ("priorityScale", "Override PriorityScale attribute (-1 = use class default)", priorityScale);
   cmd.AddValue ("attackerFraction", "Fraction of non-sink nodes marked malicious. Default 0.0.", attackerFraction);
   cmd.AddValue ("dropProbability", "Probability a malicious node drops a won packet. Default 0.0.", dropProbability);
+  cmd.AddValue ("adversarialMotion", "[EAQTE Step 3] If true, malicious nodes reverse drift direction to suppress SS_ij. Default false.", adversarialMotion);
+  cmd.AddValue ("pactEnabled", "[PACT] If true, use peer-referenced continuous attenuation instead of EAQTE binary freeze. Default false.", pactEnabled);
   cmd.Parse (argc, argv);
 
   RngSeedManager::SetSeed (BASE_SEED);
@@ -137,17 +142,9 @@ int main (int argc, char *argv[])
       "Y", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=" + std::to_string (AREA_Y) + "]"),
       "Z", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=" + std::to_string (AREA_Z) + "]"));
 
-  sensorMobility.SetMobilityModel ("ns3::GaussMarkovMobilityModel",
+  sensorMobility.SetMobilityModel ("ns3::McmMobilityModel",
       "Bounds", BoxValue (Box (0, AREA_X, 0, AREA_Y, 0, AREA_Z)),
-      "TimeStep", TimeValue (Seconds (1.0)),
-      "Alpha", DoubleValue (MOBILITY_ALPHA),
-      "MeanVelocity", StringValue ("ns3::UniformRandomVariable[Min=" + std::to_string (MOBILITY_MEAN_VEL_MIN)
-                                    + "|Max=" + std::to_string (MOBILITY_MEAN_VEL_MAX) + "]"),
-      "MeanDirection", StringValue ("ns3::UniformRandomVariable[Min=0|Max=6.283185]"),
-      "MeanPitch", StringValue ("ns3::ConstantRandomVariable[Constant=0]"),
-      "NormalVelocity", StringValue ("ns3::NormalRandomVariable[Mean=0|Variance=0.1]"),
-      "NormalDirection", StringValue ("ns3::NormalRandomVariable[Mean=0|Variance=0.1]"),
-      "NormalPitch", StringValue ("ns3::NormalRandomVariable[Mean=0|Variance=0.02]"));
+      "TimeStep", TimeValue (Seconds (1.0)));
 
   sensorMobility.Install (nodes);
 
@@ -179,6 +176,7 @@ int main (int argc, char *argv[])
                             "TargetPos", Vector3DValue (SINK_POSITION),
                             "TrustWeight", DoubleValue (TRUST_WEIGHT),
                             "TrustDecay", DoubleValue (TRUST_DECAY),
+                            "PactEnabled", BooleanValue (pactEnabled),
                             "PriorityScale", DoubleValue (priorityScale));
       NS_LOG_INFO ("PriorityScale overridden via CommandLine: " << priorityScale);
     }
@@ -189,7 +187,8 @@ int main (int argc, char *argv[])
                             "Width", DoubleValue (VBF_WIDTH),
                             "TargetPos", Vector3DValue (SINK_POSITION),
                             "TrustWeight", DoubleValue (TRUST_WEIGHT),
-                            "TrustDecay", DoubleValue (TRUST_DECAY));
+                            "TrustDecay", DoubleValue (TRUST_DECAY),
+                            "PactEnabled", BooleanValue (pactEnabled));
       NS_LOG_INFO ("PriorityScale not overridden -- using class compiled default.");
     }
 
@@ -209,6 +208,8 @@ int main (int argc, char *argv[])
   std::vector<uint32_t> maliciousIndices (shuffledForMalicious.begin (),
                                            shuffledForMalicious.begin () + std::min<size_t> (numMalicious, shuffledForMalicious.size ()));
   std::sort (maliciousIndices.begin (), maliciousIndices.end ());
+
+
 
   NS_LOG_INFO ("Attacker fraction: " << attackerFraction << " (" << maliciousIndices.size () << " malicious nodes), "
                "drop probability: " << dropProbability);
@@ -250,6 +251,21 @@ int main (int argc, char *argv[])
 
       trustRouting->SetAttribute ("IsMalicious", BooleanValue (true));
       trustRouting->SetAttribute ("DropProbability", DoubleValue (dropProbability));
+
+      // [EAQTE Step 3] Same malicious node also gets adversarial motion on
+      // its mobility model -- a genuinely different object from the routing
+      // agent above, reached via the node itself. If MCM isn't in use
+      // (e.g. GaussMarkov fallback), this cast returns null and is a no-op:
+      // the drop-based attack still runs, just without motion manipulation.
+      Ptr<McmMobilityModel> mob = DynamicCast<McmMobilityModel> (dev->GetNode ()->GetObject<MobilityModel> ());
+      if (mob)
+        {
+          mob->SetAttribute ("AdversarialMotion", BooleanValue (adversarialMotion));
+        }
+      else if (adversarialMotion)
+        {
+          NS_LOG_WARN ("Node " << i << ": mobility model is not McmMobilityModel -- AdversarialMotion NOT applied.");
+        }
     }
 
   if (!maliciousIndices.empty ())
@@ -332,7 +348,7 @@ int main (int argc, char *argv[])
   Simulator::Run ();
 
   std::ofstream trustFile (trustFileName);
-  trustFile << "node_id,self_trust,times_eligible,times_forwarded,times_dropped,is_malicious\n";
+  trustFile << "node_id,self_trust,times_eligible,times_forwarded,times_dropped,is_malicious,avg_observed_trust,num_observers\n";
   double totalEnergyConsumed = 0.0;
   for (uint32_t i = 0; i < nodes.GetN (); i++)
     {
@@ -347,15 +363,68 @@ int main (int argc, char *argv[])
           Ptr<AquaSimTrustQVBF> trustRouting = DynamicCast<AquaSimTrustQVBF> (dev->GetRouting ());
           if (trustRouting)
             {
+              // [PACT eval] Node i's reputation AS SEEN BY the network: average
+              // of what every other node's observed-trust map says about i.
+              // Only counts observers that actually hold a non-default opinion
+              // (i.e. have genuinely observed i), so untouched 0.5 defaults
+              // from nodes that never interacted with i don't dilute the mean.
+              AquaSimAddress addrI = AquaSimAddress::ConvertFrom (dev->GetAddress ());
+              double obsSum = 0.0;
+              uint32_t obsCount = 0;
+              for (uint32_t j = 0; j < nodes.GetN (); j++)
+                {
+                  if (j == i) continue;
+                  Ptr<AquaSimNetDevice> devJ = DynamicCast<AquaSimNetDevice> (g_devices.Get (j));
+                  if (!devJ) continue;
+                  Ptr<AquaSimTrustQVBF> rtJ = DynamicCast<AquaSimTrustQVBF> (devJ->GetRouting ());
+                  if (!rtJ) continue;
+                  double opinion = rtJ->GetObservedTrust (addrI);
+                  if (opinion != 0.5)
+                    {
+                      obsSum += opinion;
+                      obsCount++;
+                    }
+                }
+              double avgObs = (obsCount > 0) ? (obsSum / obsCount) : 0.5;
+
               trustFile << i << "," << trustRouting->GetSelfTrust () << ","
                         << trustRouting->GetTimesEligible () << ","
                         << trustRouting->GetTimesForwarded () << ","
                         << trustRouting->GetTimesDropped () << ","
-                        << (trustRouting->IsMalicious () ? 1 : 0) << "\n";
+                        << (trustRouting->IsMalicious () ? 1 : 0) << ","
+                        << avgObs << "," << obsCount << "\n";
             }
         }
     }
   trustFile.close ();
+
+  // Observer trust: for every node in the network, ask what it currently
+  // believes about each KNOWN malicious node, via genuine peer observation
+  // (not self-report). This is the real test of whether the Sep 18 fix
+  // (crediting only the actually-overheard watched node, not "any third
+  // party forwarded it") lets observed trust catch what self-trust can't.
+  std::string observedFileName = tag + "_" + std::to_string (runNumber) + "_observed.csv";
+  std::ofstream observedFile (observedFileName);
+  observedFile << "observer_id,watched_node_id,is_malicious,observed_trust\n";
+  for (uint32_t obsIdx = 0; obsIdx < nodes.GetN (); obsIdx++)
+    {
+      Ptr<AquaSimNetDevice> obsDev = DynamicCast<AquaSimNetDevice> (g_devices.Get (obsIdx));
+      if (!obsDev) continue;
+      Ptr<AquaSimTrustQVBF> obsRouting = DynamicCast<AquaSimTrustQVBF> (obsDev->GetRouting ());
+      if (!obsRouting) continue;
+
+      for (uint32_t watchedIdx : maliciousIndices)
+        {
+          if (watchedIdx == obsIdx) continue;
+          Ptr<AquaSimNetDevice> watchedDev = DynamicCast<AquaSimNetDevice> (g_devices.Get (watchedIdx));
+          if (!watchedDev) continue;
+          AquaSimAddress watchedAddr = AquaSimAddress::ConvertFrom (watchedDev->GetAddress ());
+          double obsTrust = obsRouting->GetObservedTrust (watchedAddr);
+          observedFile << obsIdx << "," << watchedIdx << ",1," << obsTrust << "\n";
+        }
+    }
+  observedFile.close ();
+
   Simulator::Destroy ();
 
   g_energyFile.close ();

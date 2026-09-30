@@ -90,6 +90,15 @@ public:
                      TimeValue (Seconds (1.0)),
                      MakeTimeAccessor (&McmMobilityModel::m_timeStep),
                      MakeTimeChecker ())
+      .AddAttribute ("AdversarialMotion",
+                     "[EAQTE Step 3] If true, this node reverses its drift "
+                     "direction relative to the local current, deliberately "
+                     "diverging from co-drifting honest neighbours to "
+                     "suppress SS_ij and trigger the environmental freeze "
+                     "on purpose. Default false.",
+                     BooleanValue (false),
+                     MakeBooleanAccessor (&McmMobilityModel::m_adversarialMotion),
+                     MakeBooleanChecker ())
       .AddAttribute ("VelocityScale",
                      "Current speed in m/s. See file header: this is a "
                      "tunable design choice, not a value derived from the "
@@ -133,7 +142,8 @@ public:
 
   McmMobilityModel ()
     : m_A (1.2), m_c (0.12), m_k (2.0 * M_PI / 7.5), m_omega (0.4),
-      m_epsilon (0.3), m_posScale (1000.0), m_velocityScale (0.3)
+      m_adversarialMotion (false), m_reversalEndTime (-1.0),
+    m_epsilon (0.3), m_posScale (1000.0), m_velocityScale (0.3)
   {
     // [FIX] Do NOT rely on Object::DoInitialize() being called -- it is not
     // automatically invoked on mobility models by MobilityHelper::Install(),
@@ -214,10 +224,43 @@ private:
   {
     double t = Simulator::Now ().GetSeconds ();
     Vector dir = DriftDirection (m_position.x, m_position.y, t);
+
+    // [EAQTE Step 3v2] Event-triggered reversal, not permanent: v1 (always
+    // reversed) caused widespread collateral freezing of HONEST neighbours
+    // (859/950 freezes fell on honest nodes in testing) rather than
+    // protecting the attacker itself, because permanent reversal diverges
+    // from every neighbour at every instant. This version only reverses
+    // for a short window right around an actual drop decision -- see
+    // TriggerReversal() -- so the node drifts normally otherwise.
+    bool currentlyReversed = m_adversarialMotion && (t < m_reversalEndTime);
+    if (currentlyReversed)
+      {
+        dir = Vector (-dir.x, -dir.y, 0.0);
+      }
+
     m_velocity = Vector (dir.x * m_velocityScale,
                          dir.y * m_velocityScale,
                          0.0);
   }
+
+public:
+  // [EAQTE Step 3v2] Called by the routing layer at the exact moment a
+  // malicious drop decision is made. Reversal window duration (1.5s) is
+  // OUR OWN design choice, NOT stated in the paper -- chosen because
+  // SS_ij is read instantaneously at decision time (not windowed like
+  // CCQ_ij's variance), so only brief coverage of the decision instant
+  // plus scheduling jitter is needed, not a long-duration reversal.
+  // MUST be public: AquaSimTrustQVBF calls this cross-module.
+  void
+  TriggerReversal (double durationSeconds = 1.5)
+  {
+    if (m_adversarialMotion)
+      {
+        m_reversalEndTime = Simulator::Now ().GetSeconds () + durationSeconds;
+      }
+  }
+
+private:
 
   // Reflect off the bounding box, matching GaussMarkovMobilityModel's
   // boundary behaviour so nodes never leave the simulated volume.
@@ -248,6 +291,8 @@ private:
   Vector    m_position;
   Vector    m_velocity;
   Box       m_bounds;
+  bool      m_adversarialMotion;   // [EAQTE Step 3] capable of triggering reversal
+  double    m_reversalEndTime;     // [EAQTE Step 3v2] sim-time when active reversal ends
   Time      m_timeStep;
   EventId   m_event;
 

@@ -100,11 +100,11 @@ def main():
     path = sys.argv[1] if len(sys.argv) > 1 else 'results.csv'
     data = load(path)
 
-    if 'noattack' not in data or 'heavyattack' not in data:
+    if 'noattack' not in data or 'attack' not in data:
         print(f"Need both 'noattack' and 'underattack' arms in {path}. Found: {list(data)}")
         sys.exit(1)
 
-    A, B = data['noattack'], data['heavyattack']
+    A, B = data['noattack'], data['attack']
     runs = sorted(set(A) & set(B))
     print(f"Paired runs: {len(runs)}  ->  {runs}")
 
