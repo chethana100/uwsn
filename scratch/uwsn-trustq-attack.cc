@@ -22,6 +22,8 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <iomanip>   // [DIAG] A1
+#include <cstdlib>   // [DIAG] A1
 
 using namespace ns3;
 
@@ -64,6 +66,7 @@ const double   MOBILITY_MEAN_VEL_MIN = 0.5;
 const double   MOBILITY_MEAN_VEL_MAX = 1.5;
 
 std::ofstream g_energyFile;
+std::ofstream g_mobilityFile;  // [DIAG] A1
 NetDeviceContainer g_devices;
 
 static uint32_t g_appPacketsSent = 0;
@@ -94,6 +97,31 @@ SampleEnergy ()
     }
 }
 
+// [DIAG] A1 -- logging-only mobility sampler. McmMobilityModel changes state only in
+// Update() at whole seconds, so sampling at k+0.5 s records the exact state for
+// [k, k+1). GetPosition()/GetVelocity() are pure getters (no RNG, no state change).
+void
+SampleMobility ()
+{
+  double now = Simulator::Now ().GetSeconds ();
+  for (uint32_t i = 0; i < NodeList::GetNNodes (); i++)
+    {
+      Ptr<MobilityModel> mob = NodeList::GetNode (i)->GetObject<MobilityModel> ();
+      if (!mob)
+        {
+          continue;
+        }
+      Vector p = mob->GetPosition ();
+      Vector v = mob->GetVelocity ();
+      g_mobilityFile << now << "," << i << "," << p.x << "," << p.y << "," << p.z
+                     << "," << v.x << "," << v.y << "," << v.z << "\n";
+    }
+  if (now + 1.0 <= SIM_DURATION)
+    {
+      Simulator::Schedule (Seconds (1.0), &SampleMobility);
+    }
+}
+
 std::string
 JoinIndices (const std::vector<uint32_t> &indices)
 {
@@ -115,6 +143,9 @@ int main (int argc, char *argv[])
   double dropProbability = 0.0;
   bool adversarialMotion = false;
   bool pactEnabled = false;
+  bool mobilityLog = true;  // [DIAG] A1
+  std::string routingType = "trustq";  // [A2] trustq | aquasim-hhvbf
+  std::string propagation = "range";  // [B] range | simple
 
   CommandLine cmd;
   cmd.AddValue ("run", "Run number (varies RNG seeds and output filenames)", runNumber);
@@ -124,7 +155,23 @@ int main (int argc, char *argv[])
   cmd.AddValue ("dropProbability", "Probability a malicious node drops a won packet. Default 0.0.", dropProbability);
   cmd.AddValue ("adversarialMotion", "[EAQTE Step 3] If true, malicious nodes reverse drift direction to suppress SS_ij. Default false.", adversarialMotion);
   cmd.AddValue ("pactEnabled", "[PACT] If true, use peer-referenced continuous attenuation instead of EAQTE binary freeze. Default false.", pactEnabled);
+  cmd.AddValue ("mobilityLog", "[DIAG] Write <tag>_<run>_mobility.csv (exact node state, 1 s). Default true.", mobilityLog);
+  cmd.AddValue ("routing", "[A2] trustq (AquaSimTrustQVBF, default) | aquasim-hhvbf (unmodified Aqua-Sim-NG AquaSimVBF, HopByHop=1)", routingType);
+  cmd.AddValue ("propagation", "[B] range (AquaSimRangePropagation, default) | simple (AquaSimSimplePropagation, pre-rebaseline reproduction only)", propagation);
   cmd.Parse (argc, argv);
+  // [A2] validate routing selection
+  NS_ABORT_MSG_UNLESS (routingType == "trustq" || routingType == "aquasim-hhvbf",
+                       "--routing must be trustq or aquasim-hhvbf, got " << routingType);
+  NS_ABORT_MSG_IF (routingType == "aquasim-hhvbf" && (attackerFraction > 0.0 || pactEnabled || adversarialMotion),
+                   "--routing=aquasim-hhvbf has no attacker/PACT/adversarial-motion support");
+  NS_ABORT_MSG_UNLESS (propagation == "range" || propagation == "simple",
+                       "--propagation must be range or simple, got " << propagation);  // [B]
+  if (propagation == "range")  // [B] routing-layer RX_RANGE_M must not be combined with channel range
+    {
+      const char *rxEnvB = std::getenv ("RX_RANGE_M");
+      NS_ABORT_MSG_IF (rxEnvB && std::atof (rxEnvB) > 0.0,
+                       "[B] RX_RANGE_M is set; it must not be used with --propagation=range");
+    }
 
   RngSeedManager::SetSeed (BASE_SEED);
   RngSeedManager::SetRun (runNumber);
@@ -146,15 +193,35 @@ int main (int argc, char *argv[])
       "Bounds", BoxValue (Box (0, AREA_X, 0, AREA_Y, 0, AREA_Z)),
       "TimeStep", TimeValue (Seconds (1.0)));
 
-  sensorMobility.Install (nodes);
+  // [A2] Sink fix: MCM on nodes 1..N-1 only. MobilityHelper::Install keeps an existing model,
+  // so installing ConstantPosition on a node that already has MCM is a no-op.
+  NodeContainer sensorNodes;
+  for (uint32_t i = 0; i < NUM_NODES; i++)
+    {
+      if (i != SINK_NODE_INDEX)
+        {
+          sensorNodes.Add (nodes.Get (i));
+        }
+    }
+  sensorMobility.Install (sensorNodes);
 
   MobilityHelper sinkMobility;
   sinkMobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   sinkMobility.Install (nodes.Get (SINK_NODE_INDEX));
   Ptr<MobilityModel> sinkMob = nodes.Get (SINK_NODE_INDEX)->GetObject<MobilityModel> ();
   sinkMob->SetPosition (SINK_POSITION);
+  NS_ABORT_MSG_UNLESS (DynamicCast<ConstantPositionMobilityModel> (sinkMob),
+                       "[A2] sink mobility is " << sinkMob->GetInstanceTypeId ().GetName ()
+                       << ", expected ns3::ConstantPositionMobilityModel");
 
   AquaSimChannelHelper channelHelper = AquaSimChannelHelper::Default ();
+  // [B] --propagation=range: reception range enforced at the channel (AquaSimRangePropagation
+  // delivers copies only to receivers within the stamped TxRange = PHY TransRange).
+  // --propagation=simple keeps the pre-rebaseline AquaSimSimplePropagation default.
+  if (propagation == "range")
+    {
+      channelHelper.SetPropagation ("ns3::AquaSimRangePropagation");
+    }
   Ptr<AquaSimChannel> channel = channelHelper.Create ();
 
   AquaSimHelper asHelper = AquaSimHelper::Default ();
@@ -168,7 +235,15 @@ int main (int argc, char *argv[])
 
   asHelper.SetMac ("ns3::AquaSimBroadcastMac");
 
-  if (priorityScale >= 0.0)
+  if (routingType == "aquasim-hhvbf")  // [A2] unmodified Aqua-Sim-NG AquaSimVBF, hop-by-hop mode
+    {
+      asHelper.SetRouting ("ns3::AquaSimVBF",
+                            "HopByHop", IntegerValue (1),
+                            "Width", DoubleValue (VBF_WIDTH),
+                            "TargetPos", Vector3DValue (SINK_POSITION));
+      NS_LOG_INFO ("Routing: base ns3::AquaSimVBF (HopByHop=1)");
+    }
+  else if (priorityScale >= 0.0)
     {
       asHelper.SetRouting ("ns3::AquaSimTrustQVBF",
                             "HopByHop", IntegerValue (1),
@@ -227,6 +302,18 @@ int main (int argc, char *argv[])
     }
   g_devices = devices;
 
+  // [A2] Pin per-node MAC and routing RNG streams. ns-3 assigns automatic streams in
+  // creation order, and AquaSimTrustQVBF creates one more RNG per node than AquaSimVBF,
+  // which would otherwise shift every MAC backoff stream between the two arms.
+  // Explicit streams occupy the upper 2^63 range and never collide with automatic ones.
+  const int64_t STREAM_BASE = 1000;
+  for (uint32_t i = 0; i < devices.GetN (); i++)
+    {
+      Ptr<AquaSimNetDevice> sDev = DynamicCast<AquaSimNetDevice> (devices.Get (i));
+      sDev->GetMac ()->AssignStreams (STREAM_BASE + 2 * i);
+      sDev->GetRouting ()->AssignStreams (STREAM_BASE + 2 * i + 1);
+    }
+
   for (uint32_t i = 0; i < devices.GetN (); i++)
     {
       bool isMalicious = std::binary_search (maliciousIndices.begin (), maliciousIndices.end (), i);
@@ -276,6 +363,50 @@ int main (int argc, char *argv[])
       NS_LOG_INFO ("Malicious assignment verification: node " << checkIdx << " IsMalicious="
                    << (checkRouting ? (checkRouting->IsMalicious () ? "true" : "false") : "NULL_ROUTING"));
     }
+
+  // [DIAG] A1 -- provenance for _meta.csv (logging only): the configuration actually in effect.
+  std::ostringstream provenance;
+  {
+    PointerValue propPv;
+    channel->GetAttribute ("SetProp", propPv);
+    Ptr<Object> prop = propPv.GetObject ();
+    Ptr<AquaSimNetDevice> pDev = DynamicCast<AquaSimNetDevice> (devices.Get (1));
+    Ptr<AquaSimRouting> pRt = pDev ? pDev->GetRouting () : nullptr;
+    Ptr<AquaSimVBF> pVbf = DynamicCast<AquaSimVBF> (pRt);
+    Ptr<AquaSimTrustQVBF> pTq = DynamicCast<AquaSimTrustQVBF> (pRt);
+    IntegerValue hbh (-1);
+    DoubleValue width (-1), ps (-1), tw (-1), otw (-1), atkStart (-1);
+    BooleanValue pht (false), pact (false);
+    BooleanValue pdes (false);  // [C]
+    UintegerValue atkMode (0);
+    if (pVbf)
+      {
+        pVbf->GetAttribute ("HopByHop", hbh);
+        pVbf->GetAttribute ("Width", width);
+      }
+    if (pTq)
+      {
+        pTq->GetAttribute ("PriorityScale", ps);
+        pTq->GetAttribute ("TrustWeight", tw);
+        pTq->GetAttribute ("ObservedTrustWeight", otw);
+        pTq->GetAttribute ("PaperHoldTime", pht);
+        pTq->GetAttribute ("PaperDesirableness", pdes);  // [C]
+        pTq->GetAttribute ("PactEnabled", pact);
+        pTq->GetAttribute ("AttackStart", atkStart);
+        pTq->GetAttribute ("AttackMode", atkMode);
+      }
+    const char *rxEnv = std::getenv ("RX_RANGE_M");
+    const char *xiEnv = std::getenv ("EAQTE_XI");
+    provenance << runNumber << "," << BASE_SEED << ","
+               << (prop ? prop->GetInstanceTypeId ().GetName () : std::string ("none")) << ","
+               << (pRt ? pRt->GetInstanceTypeId ().GetName () : std::string ("none")) << ","
+               << hbh.Get () << "," << width.Get () << "," << ps.Get () << "," << tw.Get () << ","
+               << otw.Get () << "," << (pht.Get () ? 1 : 0) << "," << (pact.Get () ? 1 : 0) << ","
+               << atkStart.Get () << "," << atkMode.Get () << ","
+               << (rxEnv ? rxEnv : "unset") << "," << (xiEnv ? xiEnv : "unset")
+               << "," << sinkMob->GetInstanceTypeId ().GetName () << "," << STREAM_BASE  // [A2]
+               << "," << (pTq ? (pdes.Get () ? 1 : 0) : -1);  // [C] paper_desirableness (-1 = n/a)
+  }
 
   PacketSocketHelper packetSocket;
   packetSocket.Install (nodes);
@@ -338,6 +469,13 @@ int main (int argc, char *argv[])
   g_energyFile.open (energyFileName);
   g_energyFile << "time,node_id,residual_energy\n";
   Simulator::Schedule (Seconds (0.0), &SampleEnergy);
+  std::string mobilityFileName = tag + "_" + std::to_string (runNumber) + "_mobility.csv";  // [DIAG] A1
+  if (mobilityLog)
+    {
+      g_mobilityFile.open (mobilityFileName);
+      g_mobilityFile << std::setprecision (17) << "time,node_id,x,y,z,vx,vy,vz\n";
+      Simulator::Schedule (Seconds (0.5), &SampleMobility);
+    }
 
   NS_LOG_INFO ("Network configured. Trace file '" << trFile << "', energy log '"
                << energyFileName << "' will be generated.");
@@ -428,15 +566,23 @@ int main (int argc, char *argv[])
   Simulator::Destroy ();
 
   g_energyFile.close ();
+  if (mobilityLog)  // [DIAG] A1
+    {
+      g_mobilityFile.close ();
+    }
 
   std::ofstream metaFile (metaFileName);
   metaFile << "app_packets_sent,packet_size_bytes,sim_duration,total_energy_consumed_J,"
-           << "num_sources,sources,attacker_fraction,drop_probability,num_malicious,malicious_nodes\n";
+           << "num_sources,sources,attacker_fraction,drop_probability,num_malicious,malicious_nodes"
+           << ",run,base_seed,propagation,routing,hop_by_hop,width,priority_scale,trust_weight,"   // [DIAG] A1
+           << "observed_trust_weight,paper_hold_time,pact_enabled,attack_start,attack_mode,"
+           << "rx_range_m_env,eaqte_xi_env,sink_mobility,stream_base,paper_desirableness\n";  // [A2] +2, [C] +1
   metaFile << g_appPacketsSent << "," << PACKET_SIZE << "," << SIM_DURATION << ","
            << totalEnergyConsumed << ","
            << sourceIndices.size () << ",\"" << JoinIndices (sourceIndices) << "\","
            << attackerFraction << "," << dropProbability << ","
-           << maliciousIndices.size () << ",\"" << JoinIndices (maliciousIndices) << "\"\n";
+           << maliciousIndices.size () << ",\"" << JoinIndices (maliciousIndices) << "\""
+           << "," << provenance.str () << "\n";  // [DIAG] A1
   metaFile.close ();
 
   NS_LOG_INFO ("App packets sent (correct PDR denominator): " << g_appPacketsSent);

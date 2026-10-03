@@ -146,6 +146,9 @@ main (int argc, char *argv[])
 
   // ---------------- Channel, PHY, MAC, routing ---------------------------
   AquaSimChannelHelper channelHelper = AquaSimChannelHelper::Default ();
+  // [B] Reception range enforced at the channel: AquaSimRangePropagation delivers copies only
+  // to receivers within the stamped TxRange (= PHY TransRange). No routing-layer filtering.
+  channelHelper.SetPropagation ("ns3::AquaSimRangePropagation");
   Ptr<AquaSimChannel> channel = channelHelper.Create ();
 
   AquaSimHelper asHelper = AquaSimHelper::Default ();

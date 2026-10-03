@@ -1,0 +1,21 @@
+== c_tq_a: transmissions 2516, exact header rebuild 2476 (ambiguous/unrebuildable 40)
+   rebuild vs printed trace (within 6-digit print resolution): f mismatches 0, d mismatches 0
+   relay transmissions evaluated: 1536
+   recovery error |(f_X - d_X) - f_upstream|: median 0.2998 m, p95 0.5999, p99 0.6004, max 0.6009 m
+   nearest OTHER transmitter of the same packet to the recovered position: min 136.1 m, p1 136.3, p5 182.5, median 309.9
+   relay transmissions with another transmitter within eps=25.0 m of the recovered position: 0
+   eps acceptance rule (stated before running): max error <= 12.5 m -> ACCEPT
+== d_p100: transmissions 2409, exact header rebuild 2375 (ambiguous/unrebuildable 34)
+   rebuild vs printed trace (within 6-digit print resolution): f mismatches 0, d mismatches 0
+   relay transmissions evaluated: 1435
+   recovery error |(f_X - d_X) - f_upstream|: median 0.2997 m, p95 0.5999, p99 0.6004, max 0.6008 m
+   nearest OTHER transmitter of the same packet to the recovered position: min 182.5 m, p1 182.5, p5 209.7, median 315.6
+   relay transmissions with another transmitter within eps=25.0 m of the recovered position: 0
+   eps acceptance rule (stated before running): max error <= 12.5 m -> ACCEPT
+== d_p075: transmissions 2433, exact header rebuild 2397 (ambiguous/unrebuildable 36)
+   rebuild vs printed trace (within 6-digit print resolution): f mismatches 0, d mismatches 0
+   relay transmissions evaluated: 1457
+   recovery error |(f_X - d_X) - f_upstream|: median 0.2997 m, p95 0.5999, p99 0.6004, max 0.6008 m
+   nearest OTHER transmitter of the same packet to the recovered position: min 136.3 m, p1 182.5, p5 182.5, median 315.5
+   relay transmissions with another transmitter within eps=25.0 m of the recovered position: 0
+   eps acceptance rule (stated before running): max error <= 12.5 m -> ACCEPT

@@ -35,6 +35,7 @@
 #include <random>
 #include <fstream>
 #include <string>
+#include <cstdlib>  // [B]
 
 using namespace ns3;
 
@@ -117,6 +118,12 @@ int main (int argc, char *argv[])
   cmd.AddValue ("tag", "Tag prefix for output filenames", tag);
   cmd.AddValue ("priorityScale", "Override PriorityScale attribute (-1 = use class default)", priorityScale);
   cmd.Parse (argc, argv);
+  // [B] The routing-layer RX_RANGE_M cut must not be combined with channel-level range.
+  {
+    const char *rxEnvB = std::getenv ("RX_RANGE_M");
+    NS_ABORT_MSG_IF (rxEnvB && std::atof (rxEnvB) > 0.0,
+                     "[B] RX_RANGE_M is set; it must not be used with AquaSimRangePropagation");
+  }
 
   RngSeedManager::SetSeed (BASE_SEED);
   RngSeedManager::SetRun (runNumber);
@@ -146,15 +153,31 @@ int main (int argc, char *argv[])
       "NormalDirection", StringValue ("ns3::NormalRandomVariable[Mean=0|Variance=0.1]"),
       "NormalPitch", StringValue ("ns3::NormalRandomVariable[Mean=0|Variance=0.02]"));
 
-  sensorMobility.Install (nodes);
+  // [B] Sink fix: mobility on nodes 1..N-1 only. MobilityHelper::Install keeps an existing
+  // model, so installing ConstantPosition on a node that already has one is a no-op.
+  NodeContainer sensorNodes;
+  for (uint32_t i = 0; i < NUM_NODES; i++)
+    {
+      if (i != SINK_NODE_INDEX)
+        {
+          sensorNodes.Add (nodes.Get (i));
+        }
+    }
+  sensorMobility.Install (sensorNodes);
 
   MobilityHelper sinkMobility;
   sinkMobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   sinkMobility.Install (nodes.Get (SINK_NODE_INDEX));
   Ptr<MobilityModel> sinkMob = nodes.Get (SINK_NODE_INDEX)->GetObject<MobilityModel> ();
   sinkMob->SetPosition (SINK_POSITION);
+  NS_ABORT_MSG_UNLESS (DynamicCast<ConstantPositionMobilityModel> (sinkMob),
+                       "[B] sink mobility is " << sinkMob->GetInstanceTypeId ().GetName ()
+                       << ", expected ns3::ConstantPositionMobilityModel");
 
   AquaSimChannelHelper channelHelper = AquaSimChannelHelper::Default ();
+  // [B] Reception range enforced at the channel: AquaSimRangePropagation delivers copies only
+  // to receivers within the stamped TxRange (= PHY TransRange). No routing-layer filtering.
+  channelHelper.SetPropagation ("ns3::AquaSimRangePropagation");
   Ptr<AquaSimChannel> channel = channelHelper.Create ();
 
   AquaSimHelper asHelper = AquaSimHelper::Default ();

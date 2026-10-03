@@ -1,0 +1,153 @@
+
+######## c_tq_a  (malicious nodes: 0)
+custody tag == [DECISION] up on [VERDICT] CREDIT lines: {'eq': 5145}
+
+[D1] DROP observability: 0 ground-truth DROP events by 0 nodes
+
+[D2] valid observable opportunities: 17132  (outcome rows x ground-truth columns)
+  -- honest | O!=U  (n=14858)
+                   FWD_TX MAC_GIVEUP   SUPPRESS     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH           7084          0          0          0          0          0          0    7084
+     OTHER-UP           0          0          0          0          0       4459          0    4459
+     SILENT           361         36        309        116         12        951       1530    3315
+  -- honest | O=U  (n=2274)
+                   FWD_TX MAC_GIVEUP   SUPPRESS     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH            767          0          0          0          0          0          0     767
+     OTHER-UP           0          0          0          0          0        957          0     957
+     SILENT            54          3         79          9          3         99        303     550
+
+[D3] silence vs ground truth (silent = the only outcome a blame could rest on; OTHER-UP excluded)
+     split               silent  =DROP false-blame | after EAQTE excl. false-blame | unique (X,c): silent  =DROP false-blame
+     honest | O!=U         3315      0      100.0% |              3315      100.0% |                  709      0      100.0%
+     honest | O=U           550      0      100.0% |               550      100.0% |                  550      0      100.0%
+     ALL                   3865      0      100.0% |              3865      100.0% |                  767      0      100.0%
+     makeup of ALL silent opportunities: {'NORX': 1833, 'DIFF_UP': 1050, 'FWD_TX': 415, 'SUPPRESS': 388, 'INELIG': 125, 'MAC_GIVEUP': 39, 'OUTPIPE': 15}
+     silent with predicted rank 1 (first firer): n=3122, =DROP 0, makeup {'NORX': 1482, 'DIFF_UP': 929, 'FWD_TX': 357, 'SUPPRESS': 244, 'INELIG': 72}
+     silent with predicted rank >=2: n=743, =DROP 0, makeup {'NORX': 351, 'SUPPRESS': 144, 'DIFF_UP': 121, 'FWD_TX': 58, 'INELIG': 53}
+     MATCH ground truth: {'FWD_TX': 7851}
+
+[D4] recovered upstream vs custody tag over 13267 heard responses (MATCH + OTHER-UP):
+     position level (|f_X - d_X - f_custody| <= eps): {'agree': 13267}
+     identity resolvable by O (nearest transmitter O decoded, within eps): {'agree': 11431, 'unresolved (upstream not decoded by O)': 1836}
+     recovered-position used fallback (printed d) in 235 responses
+
+[D5] EAQTE environmental exclusion (EE < 0.3): 0 of 17132 opportunities (0.00%)
+     excluded makeup: outcome {}; ground truth {}
+     excluded by split: {}
+     EE over opportunities: p1 0.711, median 0.916, max 1.000
+
+[RELAYS] relays (FWD+DROP decisions) per (packet, upstream copy): [(1, 614), (2, 50), (3, 285)]  (5 = 5+)
+     group size 1: 614 groups; members deciding with n=1 (no duplicate heard before timer): 562/614
+     group size 2: 50 groups; members deciding with n=1 (no duplicate heard before timer): 100/100
+     group size 3: 285 groups; members deciding with n=1 (no duplicate heard before timer): 855/855
+
+######## d_p100  (malicious nodes: 20)
+custody tag == [DECISION] up on [VERDICT] CREDIT lines: {'eq': 5595}
+
+[D1] DROP observability: 218 ground-truth DROP events by 3 nodes
+     X never heard by any potential observer                   218  (100.0%)
+     only stale entries (>60 s)                                  0  (  0.0%)
+     fails observers' eligibility estimate                       0  (  0.0%)
+     eligible but no observer within hearing range of X          0  (  0.0%)
+     OBSERVABLE (>=1 valid opportunity)                          0  (  0.0%)
+     observable via O=U: 0 (0.0%);  via O!=U: 0 (0.0%);  observable and not EAQTE-excluded for >=1 observer: 0 (0.0%)
+     dropping nodes that never transmitted anything in the run: 3 of 3
+
+[D2] valid observable opportunities: 13836  (outcome rows x ground-truth columns)
+  -- honest | O!=U  (n=12254)
+                   FWD_TX     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH           7237          0          0          0          0    7237
+     OTHER-UP           0          0          0       2773          0    2773
+     SILENT           593         87         14        642        908    2244
+  -- honest | O=U  (n=1582)
+                   FWD_TX     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH            730          0          0          0          0     730
+     OTHER-UP           0          0          0        604          0     604
+     SILENT            99          5          2          8        134     248
+
+[D3] silence vs ground truth (silent = the only outcome a blame could rest on; OTHER-UP excluded)
+     split               silent  =DROP false-blame | after EAQTE excl. false-blame | unique (X,c): silent  =DROP false-blame
+     honest | O!=U         2244      0      100.0% |              2244      100.0% |                  443      0      100.0%
+     honest | O=U           248      0      100.0% |               248      100.0% |                  248      0      100.0%
+     ALL                   2492      0      100.0% |              2492      100.0% |                  518      0      100.0%
+     makeup of ALL silent opportunities: {'NORX': 1042, 'FWD_TX': 692, 'DIFF_UP': 650, 'INELIG': 92, 'OUTPIPE': 16}
+     silent with predicted rank 1 (first firer): n=2157, =DROP 0, makeup {'NORX': 924, 'DIFF_UP': 649, 'FWD_TX': 529, 'INELIG': 39, 'OUTPIPE': 16}
+     silent with predicted rank >=2: n=335, =DROP 0, makeup {'FWD_TX': 163, 'NORX': 118, 'INELIG': 53, 'DIFF_UP': 1}
+     MATCH ground truth: {'FWD_TX': 7967}
+
+[D4] recovered upstream vs custody tag over 11344 heard responses (MATCH + OTHER-UP):
+     position level (|f_X - d_X - f_custody| <= eps): {'agree': 11344}
+     identity resolvable by O (nearest transmitter O decoded, within eps): {'agree': 10289, 'unresolved (upstream not decoded by O)': 1055}
+     recovered-position used fallback (printed d) in 161 responses
+
+[D5] EAQTE environmental exclusion (EE < 0.3): 0 of 13836 opportunities (0.00%)
+     excluded makeup: outcome {}; ground truth {}
+     excluded by split: {}
+     EE over opportunities: p1 0.705, median 0.916, max 1.000
+
+[RELAYS] relays (FWD+DROP decisions) per (packet, upstream copy): [(1, 546), (2, 99), (3, 311)]  (5 = 5+)
+     group size 1: 546 groups; members deciding with n=1 (no duplicate heard before timer): 546/546
+     group size 2: 99 groups; members deciding with n=1 (no duplicate heard before timer): 198/198
+     group size 3: 311 groups; members deciding with n=1 (no duplicate heard before timer): 933/933
+
+######## d_p075  (malicious nodes: 20)
+custody tag == [DECISION] up on [VERDICT] CREDIT lines: {'eq': 5241}
+
+[D1] DROP observability: 172 ground-truth DROP events by 3 nodes
+     X never heard by any potential observer                     7  (  4.1%)
+     only stale entries (>60 s)                                104  ( 60.5%)
+     fails observers' eligibility estimate                       3  (  1.7%)
+     eligible but no observer within hearing range of X          0  (  0.0%)
+     OBSERVABLE (>=1 valid opportunity)                         58  ( 33.7%)
+     observable via O=U: 47 (27.3%);  via O!=U: 58 (33.7%);  observable and not EAQTE-excluded for >=1 observer: 58 (33.7%)
+     'only stale' drops: freshest observer entry age min 89 s, median 181 s, max 639 s; within 120 s: 28, within 300 s: 78 of 104
+     dropping nodes that never transmitted anything in the run: 0 of 3
+
+[D2] valid observable opportunities: 14845  (outcome rows x ground-truth columns)
+  -- honest | O!=U  (n=12293)
+                   FWD_TX   SUPPRESS     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH           6866          0          0          0          0          0    6866
+     OTHER-UP           0          0          0          0       2727          0    2727
+     SILENT           614         72         95          9        737       1173    2700
+  -- honest | O=U  (n=1651)
+                   FWD_TX   SUPPRESS     INELIG    OUTPIPE    DIFF_UP       NORX   total
+     MATCH            686          0          0          0          0          0     686
+     OTHER-UP           0          0          0          0        596          0     596
+     SILENT           106         21          6          2         39        195     369
+  -- malicious | O!=U  (n=766)
+                   FWD_TX       DROP    DIFF_UP   total
+     MATCH             46          0          0      46
+     OTHER-UP           0          0        211     211
+     SILENT             0        176        333     509
+  -- malicious | O=U  (n=135)
+                   FWD_TX       DROP    DIFF_UP   total
+     MATCH             10          0          0      10
+     OTHER-UP           0          0         24      24
+     SILENT             0         33         68     101
+
+[D3] silence vs ground truth (silent = the only outcome a blame could rest on; OTHER-UP excluded)
+     split               silent  =DROP false-blame | after EAQTE excl. false-blame | unique (X,c): silent  =DROP false-blame
+     honest | O!=U         2700      0      100.0% |              2700      100.0% |                  574      0      100.0%
+     honest | O=U           369      0      100.0% |               369      100.0% |                  369      0      100.0%
+     malicious | O!=U       509    176       65.4% |               509       65.4% |                  140     58       58.6%
+     malicious | O=U        101     33       67.3% |               101       67.3% |                  101     33       67.3%
+     ALL                   3679    209       94.3% |              3679       94.3% |                  784     58       92.6%
+     makeup of ALL silent opportunities: {'NORX': 1368, 'DIFF_UP': 1177, 'FWD_TX': 720, 'DROP': 209, 'INELIG': 101, 'SUPPRESS': 93, 'OUTPIPE': 11}
+     silent with predicted rank 1 (first firer): n=3112, =DROP 209, makeup {'NORX': 1135, 'DIFF_UP': 1079, 'FWD_TX': 571, 'DROP': 209, 'SUPPRESS': 59}
+     silent with predicted rank >=2: n=567, =DROP 0, makeup {'NORX': 233, 'FWD_TX': 149, 'DIFF_UP': 98, 'INELIG': 53, 'SUPPRESS': 34}
+     MATCH ground truth: {'FWD_TX': 7608}
+
+[D4] recovered upstream vs custody tag over 11166 heard responses (MATCH + OTHER-UP):
+     position level (|f_X - d_X - f_custody| <= eps): {'agree': 11166}
+     identity resolvable by O (nearest transmitter O decoded, within eps): {'agree': 10021, 'unresolved (upstream not decoded by O)': 1145}
+     recovered-position used fallback (printed d) in 161 responses
+
+[D5] EAQTE environmental exclusion (EE < 0.3): 0 of 14845 opportunities (0.00%)
+     excluded makeup: outcome {}; ground truth {}
+     excluded by split: {}
+     EE over opportunities: p1 0.709, median 0.917, max 1.000
+
+[RELAYS] relays (FWD+DROP decisions) per (packet, upstream copy): [(1, 557), (2, 90), (3, 306)]  (5 = 5+)
+     group size 1: 557 groups; members deciding with n=1 (no duplicate heard before timer): 546/557
+     group size 2: 90 groups; members deciding with n=1 (no duplicate heard before timer): 180/180
+     group size 3: 306 groups; members deciding with n=1 (no duplicate heard before timer): 918/918

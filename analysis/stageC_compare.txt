@@ -1,0 +1,16 @@
+== c1_tq: decisions {'ORIGIN': 950, 'FWD': 1178, 'OUTPIPE': 10856, 'SINK': 304, 'INELIG': 863, 'SUPPRESS': 744}
+   relays per (packet, upstream copy): mean 1.63; distribution (5 = 5+) [(1, 385), (2, 215), (3, 121)]
+   hold vs progress  progress<0: n= 1151 median 0.679 s  min 0.086  max 1.603
+   hold vs progress     0-250 m: n=  409 median 0.274 s  min 0.000  max 0.514
+   hold vs progress   250-500 m: n=  539 median 0.143 s  min 0.012  max 0.702
+   hold vs progress   500-750 m: n=  316 median 0.536 s  min 0.193  max 0.908
+   hold vs progress  750-1000 m: n=  314 median 0.625 s  min 0.191  max 0.994
+   Spearman(hold, progress) = -0.347  over 2729 holds (negative = more progress fires earlier)
+== c_tq_a: decisions {'ORIGIN': 950, 'OUTPIPE': 13029, 'SINK': 428, 'FWD': 1569, 'INELIG': 1381, 'SUPPRESS': 185}
+   relays per (packet, upstream copy): mean 1.65; distribution (5 = 5+) [(1, 614), (2, 50), (3, 285)]
+   hold vs progress  progress<0: n= 1205 median 1.498 s  min 1.389  max 1.625
+   hold vs progress     0-250 m: n=  476 median 1.406 s  min 1.326  max 1.509
+   hold vs progress   250-500 m: n=  630 median 1.110 s  min 0.951  max 1.330
+   hold vs progress   500-750 m: n=  378 median 0.919 s  min 0.604  max 0.991
+   hold vs progress  750-1000 m: n=  390 median 0.507 s  min 0.371  max 0.657
+   Spearman(hold, progress) = -0.922  over 3079 holds (negative = more progress fires earlier)

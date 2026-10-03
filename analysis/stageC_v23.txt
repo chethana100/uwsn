@@ -1,0 +1,30 @@
+== c_tq_a
+[V2] [HOLD] lines 3135; [GUARD] events 0
+[V2] non-finite halpha/d/hhx/finx: 0; halpha min 0.094689 max 1.907196; hh min 0.370829 max 1.625210; final min 0.370829 max 1.625210; negative final: 0
+[V2] internal hold identity max |hh - (sqrt(halpha)*T_delay + (R-d)/v0)| = 0.000e+00
+[V2] final == hh (string-exact, 17 digits): 3135/3135
+[V2] independent recomputation from mobility log: compared 3079, skipped-ambiguous-time 56, no-stamp 0
+[V2]   max |alpha'_indep - halpha| = 0.000e+00;  max |d_indep - d| = 0.000e+00 m;  max |T_indep - hh| = 0.000e+00 s
+[V3] decisions re-derived: {'match': 3078}; skipped (ambiguous time/stamp) 57
+[V3] decision mix: {'ORIGIN': 950, 'OUTPIPE': 13029, 'SINK': 428, 'FWD': 1569, 'INELIG': 1381, 'SUPPRESS': 185}
+
+== c_smoke
+[V2] [HOLD] lines 3305; [GUARD] events 0
+[V2] non-finite halpha/d/hhx/finx: 0; halpha min 0.063463 max 1.907196; hh min 0.288390 max 1.625210; final min 0.244904 max 1.490819; negative final: 0
+[V2] internal hold identity max |hh - (sqrt(halpha)*T_delay + (R-d)/v0)| = 0.000e+00
+[V2] final == hh (string-exact, 17 digits): 0/3305
+[V2] independent recomputation from mobility log: compared 3245, skipped-ambiguous-time 60, no-stamp 0
+[V2]   max |alpha'_indep - halpha| = 0.000e+00;  max |d_indep - d| = 0.000e+00 m;  max |T_indep - hh| = 0.000e+00 s
+[V3] decisions re-derived: {'match': 3245}; skipped (ambiguous time/stamp) 60
+[V3] decision mix: {'ORIGIN': 950, 'OUTPIPE': 13479, 'SINK': 414, 'FWD': 1588, 'INELIG': 1432, 'DROP': 174, 'SUPPRESS': 111}
+
+== c1_tq
+[V2] [HOLD] lines 2785; [GUARD] events 0
+[V2] non-finite halpha/d/hhx/finx: 0; halpha min 0.102293 max 2.846735; hh min -0.092281 max 1.603079; final min 0.000000 max 1.603079; negative final: 0
+[V2] internal hold identity max |hh - (sqrt(halpha)*T_delay + (R-d)/v0)| = 1.587e+00
+[V2] final == hh (string-exact, 17 digits): 2769/2785
+[V2] independent recomputation from mobility log: compared 2729, skipped-ambiguous-time 56, no-stamp 0
+[V2]   max |alpha'_indep - halpha| = 9.999e-01;  max |d_indep - d| = 0.000e+00 m;  max |T_indep - hh| = 1.539e+00 s
+[V3] decisions re-derived: {'match': 2676}; skipped (ambiguous time/stamp) 109
+[V3] decision mix: {'ORIGIN': 950, 'FWD': 1178, 'OUTPIPE': 10856, 'SINK': 304, 'INELIG': 863, 'SUPPRESS': 744}
+

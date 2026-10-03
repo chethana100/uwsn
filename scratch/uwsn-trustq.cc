@@ -27,6 +27,7 @@
 #include <random>
 #include <fstream>
 #include <string>
+#include <cstdlib>  // [B]
 
 using namespace ns3;
 
@@ -99,6 +100,12 @@ main (int argc, char *argv[])
   cmd.AddValue ("priorityScale", "PriorityScale value", priorityScale);
   cmd.AddValue ("tag", "Output filename prefix", tag);
   cmd.Parse (argc, argv);
+  // [B] The routing-layer RX_RANGE_M cut must not be combined with channel-level range.
+  {
+    const char *rxEnvB = std::getenv ("RX_RANGE_M");
+    NS_ABORT_MSG_IF (rxEnvB && std::atof (rxEnvB) > 0.0,
+                     "[B] RX_RANGE_M is set; it must not be used with AquaSimRangePropagation");
+  }
 
   RngSeedManager::SetSeed (BASE_SEED);
   RngSeedManager::SetRun (runNumber);
@@ -125,6 +132,9 @@ main (int argc, char *argv[])
   nodes.Get (SINK_NODE_INDEX)->GetObject<MobilityModel> ()->SetPosition (SINK_POSITION);
 
   AquaSimChannelHelper channelHelper = AquaSimChannelHelper::Default ();
+  // [B] Reception range enforced at the channel: AquaSimRangePropagation delivers copies only
+  // to receivers within the stamped TxRange (= PHY TransRange). No routing-layer filtering.
+  channelHelper.SetPropagation ("ns3::AquaSimRangePropagation");
   Ptr<AquaSimChannel> channel = channelHelper.Create ();
 
   AquaSimHelper asHelper = AquaSimHelper::Default ();
