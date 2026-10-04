@@ -348,3 +348,14 @@ Diagnostic only; not a performance result.
   - Upstream recovery from the decoded values alone: **max 0.601 m**, median 0.300 m. This reproduces E-28, now without the ground-truth upstream that the Stage D rebuild used.
 - **Archive:** `analysis/stageE/rxhdr_validation/` (original scripts and outputs) and `analysis/stageE/README.md`.
 - **Status:** PASS; accepted as the final D1 change. Stage E (O1/O2, E1) not started.
+
+### E-32 — Stage E E1: evidence-layer calibration and G1 checks (clean seeds 12–21)
+- **Specification:** `analysis/stageE/README.md`, frozen revision 2 (parent `c0d2cec`, submodule `41c67c3`). Library `871c50fc…`, scenario binary `54e444ed…`.
+- **Runs:** `analysis/runargs.sh ~/uwsn-runs/stageE/E1/run_N --run=N --routing=trustq --priorityScale=0` for N = 12–21; everything else at its default (attackerFraction 0, PACT off, adversarialMotion off, range propagation, `EAQTE_XI` and `RX_RANGE_M` unset). Metadata verified for all 10 runs. 0 drops. Outputs outside the repo (711 MB).
+- **Code:** `analysis/stageE/e1/` — `geom.py`, `observer.py` (O1, observer inputs only), `truth.py` (evaluation only), `e1_validate.py` (V1–V5, V7, V8), `calibrate.py` (§7 steps 1–6, V6, freeze).
+- **O1 fidelity check (development seed 1 only, not calibration):** reproduces the Stage D opportunity lists exactly for the clean and p = 1.0 runs. At p = 0.75 one opportunity differs: an age of 60.0001 s that Stage D's 6-digit trace times rounded to 60.00 (`diagnostics/stageD_equivalence_seed1.txt`).
+- **Opportunities:** 229,309 (MATCH 108,667, SILENT 66,033, OTHER-UP 54,609); 2,668 (seed, O, X) pairs; n_cap 554.
+- **Calibration:** q̄ = 0.377979, n_ref = 14, τ_A = 9.332958 (N = 2,044 pairs), n_min = 98. Calibration FA at n ≥ n_min: 74/453 = 0.163. Over-dispersion: var(Z) = 28.98 (1 expected), rising with n.
+- **Frozen calibration file:** `analysis/stageE/e1/e1_calibration.json`, md5 `6504d1df09d5daaeef4e835611e424d4`.
+- **G1:** V1 PASS, V2 PASS, **V3 FAIL** (recovery error max 0.602 m passes; minimum separation 39.9 m < 50 m: 9 transmissions in seed 12, nodes 76 and 24 about 40 m apart, all > ε so no outcome misclassified), V4 PASS, V5 PASS, **V6 FAIL** (pooled out-of-seed FA 76/398 = 0.191, one-sided 95% lower bound 0.115 > 0.05), V7 PASS, V8 PASS.
+- **Status: G1 FAILS.** Per the frozen specification: the evidence layer is invalid as specified; stop and report; any fix is a new, separately approved design. E2–E5 not started; no attacker run generated.

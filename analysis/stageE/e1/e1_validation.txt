@@ -1,0 +1,36 @@
+Stage E E1 — G1 checks V1-V5, V7, V8 (V6 in e1_calibration_report.txt)
+runs: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+V5 static audit (no ground-truth token in code, docstrings excluded): PASS
+   observer.py: forbidden tokens none; imports ['sys, re, csv, math, bisect, collections as C', 'geom']
+   geom.py: forbidden tokens none; imports ['math']
+   calibrate.py: forbidden tokens none; imports ['numpy as np', 'sys, os, csv, json, math, hashlib, subprocess, datetime, collections as C']
+   observe() receives only the observer's own decoded copies, own t records and own mobility rows: True
+
+Per run: opportunities by outcome; configured malicious nodes; ground-truth DROP decisions
+   run 12: 11906 {'MATCH': 6572, 'SILENT': 2545, 'OTHER-UP': 2789}; malicious 0; drops 0
+   run 13: 15863 {'MATCH': 9369, 'SILENT': 2676, 'OTHER-UP': 3818}; malicious 0; drops 0
+   run 14: 32929 {'OTHER-UP': 9362, 'SILENT': 12468, 'MATCH': 11099}; malicious 0; drops 0
+   run 15: 25854 {'OTHER-UP': 7530, 'SILENT': 7280, 'MATCH': 11044}; malicious 0; drops 0
+   run 16: 26450 {'SILENT': 8884, 'OTHER-UP': 6089, 'MATCH': 11477}; malicious 0; drops 0
+   run 17: 15932 {'MATCH': 9230, 'SILENT': 4971, 'OTHER-UP': 1731}; malicious 0; drops 0
+   run 18: 31952 {'MATCH': 15411, 'SILENT': 7667, 'OTHER-UP': 8874}; malicious 0; drops 0
+   run 19: 22061 {'OTHER-UP': 2985, 'MATCH': 11016, 'SILENT': 8060}; malicious 0; drops 0
+   run 20: 16885 {'SILENT': 1917, 'MATCH': 9744, 'OTHER-UP': 5224}; malicious 0; drops 0
+   run 21: 29477 {'SILENT': 9565, 'MATCH': 13705, 'OTHER-UP': 6207}; malicious 0; drops 0
+   pooled: 229309 {'MATCH': 108667, 'SILENT': 66033, 'OTHER-UP': 54609}
+
+Outcome x ground truth (pooled):
+   MATCH     FWD_TX=108667
+   OTHER-UP  DIFF_UP=54609
+   SILENT    FWD_TX=19925  MAC_GIVEUP=3791  SUPPRESS=5321  INELIG=689  OUTPIPE=426  DIFF_UP=27503  NORX=8378
+
+V1 MATCH = 100% FWD_TX: PASS (exceptions 0 of 108667)
+V2 OTHER-UP = 100% DIFF_UP: PASS (exceptions 0 of 54609)
+V3 upstream recovery over 18632 unique responding transmissions: max error 0.6019 m (<= 12.5), median 0.2994 m; min separation to another transmitter of the packet 39.9 m (>= 50): FAIL
+V4 MATCH responses after t0 + 8 s: 0 of 108667 (max delay 2.311 s; before t0: 0): PASS
+   (information only) OTHER-UP responses: 54609; after t0 + 8 s 0; before t0 37080 — a response to a different upstream copy has no timing relation to t0
+V7 offline p(d) (Eb/N0 40 dB, as compiled) vs C++ CCQ on the first computation per (observer, neighbour): PASS; {'checked_first-hear': 2861, 'checked_envscore': 1402}; max |diff| 5.00e-07
+V8 own t-record f vs receivers' [RXHDR] f: PASS; {'transmissions': 28603, 'not_decoded_by_anyone': 3}; max component diff 0.0050 m
+
+V1-V5, V7, V8 all pass: False

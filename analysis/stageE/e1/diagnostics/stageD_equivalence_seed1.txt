@@ -1,0 +1,11 @@
+== c_tq_a (dev seed 1: E1 observer.py vs re-derived Stage D opportunities)
+stageD 17132 new 17132
+  same key, different outcome/rank: 0
+== d_p100 (dev seed 1: E1 observer.py vs re-derived Stage D opportunities)
+stageD 13836 new 13836
+  same key, different outcome/rank: 0
+== d_p075 (dev seed 1: E1 observer.py vs re-derived Stage D opportunities)
+stageD 14845 new 14844
+  only Stage D: (3, 36, 76, 83, 548) ('MATCH', 1, 1680.82)
+  same key, different outcome/rank: 1
+    ((3, 31, 76, 83, 548), ('SILENT', 2, 1680.82), ('SILENT', 1, 1680.822705427))
