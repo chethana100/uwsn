@@ -1,0 +1,42 @@
+opportunities 174700; pooled silence 0.3780
+
+[1] False alarms at the frozen tau_A by pair size (honest clean pairs):
+   n [14,28): pairs  320  FA@tau 0.000  var(Z)  10.54  95th pct Z   6.05
+   n [28,50): pairs  363  FA@tau 0.006  var(Z)  18.40  95th pct Z   7.71
+   n [50,98): pairs  908  FA@tau 0.026  var(Z)  25.22  95th pct Z   7.60
+   n [98,150): pairs  206  FA@tau 0.121  var(Z)  37.28  95th pct Z  11.96
+   n [150,250): pairs  191  FA@tau 0.157  var(Z)  35.44  95th pct Z  13.09
+   n [250,600): pairs   56  FA@tau 0.339  var(Z)  54.29  95th pct Z  15.65
+
+[2] Binomial vs observed variance of pair counts: ratio = sum (K-E)^2 / sum V, by n; beta-binomial predicts 1 + (n-1)*rho
+   n [14,28): mean n   19.7  variance ratio  11.03  implied rho 0.5350
+   n [28,50): mean n   37.4  variance ratio  18.57  implied rho 0.4832
+   n [50,98): mean n   78.6  variance ratio  32.48  implied rho 0.4058
+   n [98,150): mean n  119.4  variance ratio  40.18  implied rho 0.3308
+   n [150,250): mean n  189.6  variance ratio  48.14  implied rho 0.2499
+   n [250,600): mean n  341.9  variance ratio  86.37  implied rho 0.2504
+   pooled moment estimate rho = 0.2954  -> pair-level SD of the silence propensity around its stratum mean ~ sqrt(rho*q(1-q)) = 0.264
+
+[3] Share of opportunity-level residual variance (y - q_s) explained by group means (ANOVA R^2; upper bound, unadjusted):
+   seed                 groups    10  R^2 0.0355
+   seed x observer O    groups   753  R^2 0.1897
+   seed x neighbour X   groups   254  R^2 0.2307
+   seed x pair (O,X)    groups  2668  R^2 0.3544
+
+[4] Per-seed observed vs stratum-expected silence (shows seed-level shifts):
+   seed 12: observed 0.279  expected 0.348  diff -0.069
+   seed 13: observed 0.222  expected 0.363  diff -0.141
+   seed 14: observed 0.529  expected 0.389  diff +0.140
+   seed 15: observed 0.397  expected 0.407  diff -0.010
+   seed 16: observed 0.436  expected 0.369  diff +0.067
+   seed 17: observed 0.350  expected 0.400  diff -0.050
+   seed 18: observed 0.332  expected 0.384  diff -0.052
+   seed 19: observed 0.423  expected 0.391  diff +0.031
+   seed 20: observed 0.164  expected 0.328  diff -0.164
+   seed 21: observed 0.411  expected 0.366  diff +0.045
+
+[5] Residual silence (observed - stratum q) by observer-observable covariates:
+   D=|x-f_U| m: [0,250) n=26221 res=-0.073; [250,500) n=50245 res=-0.018; [500,750) n=53714 res=+0.068; [750,1001) n=44520 res=-0.018
+   alpha' (progress): [0,0.5) n=83754 res=+0.025; [0.5,0.8) n=58338 res=-0.010; [0.8,1.0) n=22402 res=-0.042; [1.0,1.2) n=9298 res=-0.058; [1.2,2.01) n=908 res=-0.039
+   projection/W: [0,0.25) n=21671 res=-0.104; [0.25,0.5) n=40422 res=-0.022; [0.5,0.75) n=65603 res=+0.015; [0.75,1.01) n=47004 res=+0.046
+   n eligible: [1,2) n=83453 res=-0.029; [2,4) n=82967 res=+0.025; [4,7) n=8268 res=+0.050; [7,11) n=12 res=+0.383

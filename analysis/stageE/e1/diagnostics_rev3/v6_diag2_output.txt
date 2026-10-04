@@ -1,0 +1,7 @@
+(a) pairs with n>=40: 1476; corr(first-half residual, second-half residual) = 0.759; median time span of a pair 2773 s
+    within-pair residual correlation vs time lag: [0,60) s r=0.355 (n=50994); [60,300) s r=0.600 (n=50788); [300,900) s r=0.404 (n=45550); [900,3000) s r=0.300 (n=33011)
+(b) honest propensity ~ Beta(0.902,1.484) (mean 0.378, rho 0.2954); 95th percentile 0.855; n->infinity power vs p=0.75 at FA 0.05 = 0.406
+    if covariates reduced rho to 0.15: 95th pct 0.712; n->inf power 1.000
+    if covariates reduced rho to 0.1: 95th pct 0.647; n->inf power 1.000
+    if covariates reduced rho to 0.05: 95th pct 0.564; n->inf power 1.000
+(c) pair-level rho: strata only 0.2954; strata + observable geometry (projection/W, D, D^2, alpha', n_elig) 0.2798

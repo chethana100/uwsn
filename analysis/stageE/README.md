@@ -1,14 +1,15 @@
 # Stage E — frozen specification (pre-implementation)
 
 **Status.**
-- **Frozen, revision 2** (2026-10-04; approved in session; decisions `../../RESEARCH_DECISIONS.md` D-13 to D-16; revision history in §14).
-- **Nothing is implemented:** no O1/O2 code, and E1 has not been run.
-- The only Stage E work done so far is the logging-only `[RXHDR]` change and its validation (§15, `../../EXPERIMENT_LOG.md` E-31).
+- **Revision 3** (2026-10-04). It supersedes revision 2, which was frozen at commit `c0d2cec`. Revision 3 is frozen when it is committed. Revision history is in §14; every revision-2 passage that revision 3 replaces is kept verbatim in §17.
+- **E1 was run under revision 2 and failed G1** (V3 separation; V6 false-alarm rate). The historical record is commit `58cc50c` and `../../EXPERIMENT_LOG.md` E-32; its files are kept unchanged.
+- Revision 3 changes only the O2 calibration (§7 steps 3–6 and freezing), V3, V5 and V6. **No revision-3 code exists yet, and E1 has not been re-evaluated under revision 3.**
+- The logging-only `[RXHDR]` change and its validation are in §15 (`../../EXPERIMENT_LOG.md` E-31).
 
 **Change control.**
 - This document is the reference for E1–E5.
 - Any change after freezing must be a separately approved, dated revision recorded in §14. Never edit silently.
-- The open points P1–P4 are all resolved in revision 2 (§13).
+- The open points P1–P4 were resolved in revision 2. Open point P5 (Arm B/C binning) must be resolved before E3 (§13).
 - The final pre-implementation consistency check (2026-10-04) produced three corrections (C1–C3). They are folded into §6 and §8 and marked where they apply.
 
 Contents:
@@ -24,10 +25,11 @@ Contents:
 10. EAQTE operating-point grid
 11. Experiment sequence E1–E5
 12. Decision gates G1–G6
-13. Open points to decide before E1
+13. Open points and revision-3 decisions
 14. Revision log
 15. D1(ii) `[RXHDR]` validation
 16. EAQTE Eb/N0 landmark arithmetic
+17. Superseded revision-2 text (verbatim)
 
 ---
 
@@ -167,28 +169,66 @@ A pair is (seed, O, X); pairs never span seeds. The procedure is deterministic a
    - q̄ = pooled SILENT ÷ (MATCH + SILENT) over all calibration opportunities.
    - n_ref = ⌈5 / min(q̄, 1 − q̄)⌉. This is the standard normal-approximation convention that both
      outcomes have an expected count of at least 5.
-3. **τ_A.** Compute Z for every honest calibration pair with n ≥ n_ref and sort ascending (N pairs).
-   τ_A = Z₍⌈0.95·N⌉₎ (nearest rank). A pair is flagged when Z > τ_A.
-4. **n_min,** with τ_A already fixed:
-   - For n = n_ref, n_ref + 1, …, n_cap (n_cap = the largest n of any honest calibration pair), estimate
-     power(n) by Monte Carlo with R = 10,000 synthetic pairs.
-   - Each synthetic pair has n opportunities. Strata are drawn i.i.d. from the empirical stratum mix of all
-     honest calibration opportunities; y ~ Bernoulli(q₁,s) with q₁,s = 1 − (1 − q_s)(1 − p_min), p_min = 0.75;
-     Z is computed with the calibration q_s.
-   - power(n) = the fraction with Z > τ_A. RNG: NumPy PCG64, seed 12345 (= BASE_SEED).
-   - n_min = the smallest n with power(n) ≥ 0.80.
-   - If no n ≤ n_cap qualifies, n_min is undefined and G1 fails (no adjustment).
-5. **Reported, never tuned:** the full power curve, the calibration FA among honest pairs with n ≥ n_min
-   at τ_A, and the over-dispersion of Z.
-6. **Other arms.** τ_B and τ_C use step 3 with their own weights (n_eff in place of n, n_eff ≥ n_ref) on the
-   same clean seeds. n_min is common to all arms (Arm A's, from step 4), applied to n_eff.
+3. **n-bins and per-bin thresholds τ_A,b** (revision 3). Z is unchanged; the threshold now depends on n,
+   because honest silence propensity is persistent per pair and var(Z) grows with n (E-32: var(Z) 10.5 at
+   n 14–27, 40.3 at n ≥ 70).
+   - **Reference set:** the honest calibration pairs with n ≥ n_ref (Arm A, so n is an integer).
+   - **Construction:**
+     1. Let v₁ < v₂ < … < v_m be the distinct values of n in the reference set, with c_j pairs at v_j.
+     2. Scan v₁, v₂, … in ascending order, adding the whole group of pairs at each value to the current bin.
+        **Pairs with equal n are never split between bins.** As soon as the current bin holds at least
+        **M = 200** pairs, close it. Start the next bin at the next distinct value.
+     3. After the scan, if the last bin holds fewer than M pairs and there is an earlier bin, merge it into
+        the immediately preceding bin. If there is only one bin, keep it whatever its size and report its size.
+   - **Edges and interval convention:**
+     - L₁ = n_ref. For b ≥ 2, L_b = the smallest n in bin b.
+     - Bin b covers the half-open interval [L_b, L_{b+1}). The last bin K covers [L_K, ∞).
+     - Every pair with n ≥ n_ref therefore falls in exactly one bin, including n values not seen in
+       calibration and n above the calibration maximum.
+     - Pairs with n < n_ref fall in no bin: they are not judged and are not part of the reference set.
+   - **Thresholds:** τ_A,b = Z₍⌈0.95·N_b⌉₎, the nearest rank among the N_b reference pairs in bin b, sorted
+     ascending. A pair is flagged when Z > τ_A,b for the bin whose interval contains its n.
+   - The threshold is empirically calibrated within each bin at the nominal 0.05 level; nearest rank does not
+     guarantee an exact 0.05 false-alarm rate. Transfer of that calibration to unseen seeds is tested by V6,
+     with seeds 2–11 providing the independent G2b assessment.
+   - Bins may hold more than M pairs, because ties are kept together. Each bin's size is reported.
+4. **Power by thinning, then n_min,** with every τ_A,b already fixed:
+   - One generator, NumPy PCG64 seed 12345 (= BASE_SEED); bins in ascending order. For bin b:
+     1. Draw R = 10,000 indices uniformly with replacement from the bin's pairs, ordered by (seed, O, X).
+     2. Then, in replicate order and in each pair's stored opportunity order, draw one uniform per MATCH
+        opportunity. A MATCH becomes SILENT when its uniform is < p_min = 0.75. This is the declared attacker,
+        q₁ = 1 − (1 − q)(1 − p_min), applied to real honest pairs, so their heterogeneity is kept.
+     3. Compute Z with the calibration q_s. power_b = the fraction with Z > τ_A,b.
+   - **n_min** = L_b of the smallest bin with power_b ≥ 0.80. This lower edge is n_ref when the qualifying
+     bin is bin 1. Power is not assumed to be monotone in n; the definition still takes the smallest
+     qualifying bin, and every bin's power is reported.
+   - **If no bin reaches power_b ≥ 0.80, n_min is undefined and G1 fails.** No adjustment is permitted:
+     n_min is not replaced by n_ref or any other value, and neither the 0.80 target nor p_min may be
+     changed. Failing to reach the declared power is recorded as a methodological result.
+5. **Reported, never tuned:** the bin edges and sizes; τ_A,b; the calibration FA per bin and among honest
+   pairs with n ≥ n_min; power_b per bin; the over-dispersion of Z, overall and per bin.
+   - **Diagnostic only:** the model-based power ceiling — about 0.41 under Beta(0.90, 1.48) honest
+     heterogeneity (strata only, p_min = 0.75, FA 0.05; derived from the E1 clean data). It is reported and
+     never used to change G1, the 0.80 target or p_min.
+6. **Other arms.** τ_B,b and τ_C,b use the step-3 nearest-rank rule with their own weights (n_eff in place
+   of n) on the same clean seeds. **How the bins are formed for n_eff is open point P5 (§13), to be decided
+   before E3.** n_min is common to all arms (Arm A's, from step 4), applied to n_eff.
 
 Pairs with n_eff < n_min are **"not judged"**. They are never counted as negatives.
 
-**Freezing.** Before any attacker run is generated, write one versioned JSON file containing:
-q_s, the merge map, q̄, n_ref, τ_A, the power curve, n_min, the Monte Carlo seed and R,
-the md5 of every calibration run's `stderr.log` and `v1_1.tr`, and the code commit hashes.
-Record the file's md5 in `../../EXPERIMENT_LOG.md`.
+**Status of this calibration (revision 3).**
+- Revision 3 was designed after inspecting the clean E1 data (seeds 12–21). Its calibration and V6 on those
+  seeds are therefore **recalibration and development validation**, not an independent test.
+- **The independent false-alarm assessment is the held-out honest data from seeds 2–11, under G2b.**
+- No attacker data is used to determine q_s, n_ref, bins, thresholds or n_min.
+
+**Freezing.** Before any attacker run is generated, write one versioned JSON file,
+`e1/e1_calibration_rev3.json`, containing: q_s and the merge map; q̄ and n_ref; M, the bin edges L_b and
+sizes N_b; τ_A,b per bin; power_b per bin; n_min (or "undefined"); the RNG specification (NumPy PCG64,
+seed 12345, R = 10,000, draw order as in step 4); the md5 of every calibration run's `stderr.log`,
+`v1_N.tr` and `e1_opportunities.csv`; the code commit hashes and the md5 of the calibration scripts.
+Record the file's md5 in `../../EXPERIMENT_LOG.md`. The revision-2 file `e1/e1_calibration.json` is kept
+unchanged as the historical record.
 
 **Evaluation labels** (ground truth, evaluation only):
 - **active malicious:** X configured malicious with ≥ 1 ground-truth drop;
@@ -202,16 +242,16 @@ Record the file's md5 in `../../EXPERIMENT_LOG.md`.
 - **Detection.** All three must hold:
   - AUC (Z as score, over judged pairs) **≥ 0.70**. This reuses the project's earlier pre-set observer bar (`../../PROJECT_HANDOFF.md` §6.2).
   - The AUC's 95% lower bound > 0.5.
-  - The TDR at τ_A has a 95% lower bound **above** the FA upper bound.
+  - The TDR at the per-bin thresholds τ_A,b has a 95% lower bound **above** the FA upper bound.
 - **CIs:** cluster bootstrap, resampling seeds, then nodes within seeds.
 
 ## 8. Common evidence layer per arm
 
 | Arm | w_i | Threshold |
 |---|---|---|
-| A | 1 | τ_A |
-| B | 0 if EE_{O,X}(t₀) < 0.3, otherwise 1 (the published freeze, applied per opportunity as a stand-in for the per-slot gate; a gated opportunity is excluded) | τ_B(Eb/N0) |
-| C | min(1, EE_X / median EE of O's peers): the existing PACT formula (S-07), unchanged | τ_C(Eb/N0) |
+| A | 1 | τ_A,b |
+| B | 0 if EE_{O,X}(t₀) < 0.3, otherwise 1 (the published freeze, applied per opportunity as a stand-in for the per-slot gate; a gated opportunity is excluded) | τ_B,b(Eb/N0) |
+| C | min(1, EE_X / median EE of O's peers): the existing PACT formula (S-07), unchanged | τ_C,b(Eb/N0) |
 
 **EE,** computed by O at t₀ with the coded equations (ξ = 0.3, ψ = 0.5, history window 10):
 - **CCQ:** from |pos_O(t₀) − x|. The p-history gains **one sample per (O, X) per opportunity event, in every arm.** This fixes the C++ sampling confound.
@@ -226,7 +266,7 @@ Record the file's md5 in `../../EXPERIMENT_LOG.md`.
 - A peer's EE uses its stored history plus its current p, but stores nothing.
 - So the p-history is identical in Arms B and C.
 
-**Thresholds.** τ_B and τ_C use the τ_A rule on the same clean seeds 12–21, per grid point. Arms are therefore compared at equal false-alarm rate on clean runs.
+**Thresholds.** τ_B,b and τ_C,b use the per-bin nearest-rank rule of §7 step 3 on the same clean seeds 12–21, per grid point; how their bins are formed for n_eff is open point P5. Arms are therefore compared at equal false-alarm rate on clean runs.
 
 **Trust update.**
 - Each pair's sufficient statistics (Σw(y − q), Σw²q(1 − q), Σw, Σw²) are updated. The trust state is Z.
@@ -293,9 +333,9 @@ Each stage ends with a stop-and-report.
 
 | Stage | Content | Seeds |
 |---|---|---|
-| **E1** | Clean simulation runs; offline O1/O2; checks V1–V7 (G1); calibrate and freeze q_s, merge map, τ_A, n_min | 12–21 |
+| **E1** | Clean simulation runs; offline O1/O2; checks V1–V8 (G1); calibrate and freeze q_s, merge map, bins, τ_A,b, n_min. Under revision 3, E1 is re-evaluated from the existing E1 simulation outputs and O1 opportunity files; nothing is re-simulated | 12–21 |
 | **E2** | **Arm A only** (no EAQTE, no PACT); naive attacker at p = 0.75, plus p = 1.0 for the ceiling table only; FA, AUC, TDR, observability | 2–11 |
-| **E3** | Offline replay of the EAQTE gate on the E1 traces across the grid: freeze fraction, joint SS/CCQ distribution, regimes, τ_B per grid point; evidence/EE causal test (G4) | 12–21 |
+| **E3** | Offline replay of the EAQTE gate on the E1 traces across the grid: freeze fraction, joint SS/CCQ distribution, regimes, τ_B,b per grid point (binning: P5); evidence/EE causal test (G4) | 12–21 |
 | **E4** | Only if G1–G4 pass. Arms A and B against three attackers (below); blind-spot test at every active grid point | 22–31 |
 | **E5** | Only if G5 passes. PACT offline (existing formula, no tuning), Arm C vs B vs A at the grid points where G5 passed | 41–50 |
 
@@ -330,10 +370,10 @@ Each stage ends with a stop-and-report.
 |---|---|
 | V1 | MATCH = 100% FWD_TX. Any exception must be individually explained |
 | V2 | OTHER-UP = 100% DIFF_UP |
-| V3 | Upstream recovery error ≤ 12.5 m (the Stage D acceptance rule); minimum separation ≥ 50 m |
+| V3 | Upstream recovery error ≤ 12.5 m (the Stage D acceptance rule); minimum separation between a recovered upstream and any other transmitter of the same packet **> ε + 12.5 m = 37.5 m** (revision 3). This is the smallest separation at which every recovery error within the accepted bound still classifies correctly: f_U is decoded exactly, so only û carries error. Separations below 2ε = 50 m are reported descriptively |
 | V4 | Responses arriving after t₀ + 8 s are reported (none expected) |
-| V5 | Static audit: no ground-truth field reachable from observer code |
-| V6 | Leave-one-seed-out: for each seed in 12–21, rerun §7 steps 1–4 on the other nine seeds and measure FA on the left-out seed's judged honest pairs. Pooled FA is not significantly above 0.05 |
+| V5 | Static audit: no ground-truth field reachable from observer code. Revision 3: the audit also covers the revision-3 calibration script |
+| V6 | Leave-one-seed-out: for each seed in 12–21, rerun §7 steps 1–4 (stratum rates, n_ref, bins, τ_A,b, power by thinning, n_min) on the other nine seeds with the identical deterministic procedure and that fold's own n_ref; assign the left-out seed's pairs by that fold's intervals; measure FA on its judged honest pairs. Pooled FA is not significantly above 0.05 (one-sided; cluster bootstrap over seeds, then nodes; B = 10,000, NumPy PCG64 seed 12345 — fixed reproducibility parameters of revision 3, not tunable from V6 results). FA per bin per fold is reported. **This is recalibration and development validation (§7); the independent false-alarm assessment is G2b on seeds 2–11** |
 | V7 | Offline p(d) agrees with the C++ values logged where the history has < 2 samples (there CCQ = p) |
 | V8 | (Evaluation only.) For every transmission decoded by at least one receiver, the f in the transmitter's own `t` record agrees with the receivers' `[RXHDR]` f within print resolution |
 
@@ -345,7 +385,7 @@ Each stage ends with a stop-and-report.
   - One extension to further held-out seeds is allowed. It needs a seed allocation approved at that time.
   - If the extension also fails → Option C discussion (narrow or reframe the contribution).
 
-**G2b: Detection (E2).** The FA bar and detection bar of §7.
+**G2b: Detection (E2).** The FA bar and detection bar of §7. The FA part of G2b, on the held-out honest pairs of seeds 2–11, is the independent false-alarm assessment of the revision-3 calibration.
 - **If G2b fails:** conclusion: "Oracle-free overhearing evidence does not separate droppers from honest nodes at the declared false-alarm rate." The roadmap stops and the Option C discussion follows. A trust comparison between arms is meaningless without this.
 
 **G3: EAQTE activity (E3).** Requires at least one active, non-saturated grid point.
@@ -379,9 +419,25 @@ Each stage ends with a stop-and-report.
 - **If (a) fails:** conclusion: "PACT in its current form does not close the blind spot." Any redesign would be a new pre-registered study on new seeds.
 - No claim that PACT works may be made before G6 passes.
 
-## 13. Open points to decide before E1
+## 13. Open points and revision-3 decisions
 
-All four points were resolved in revision 2 (2026-10-04). They are kept here as a record.
+**Open point (revision 3):**
+- **P5: open — decide before E3.** How bins are formed for Arms B and C, whose weights give n_eff rather than n:
+  - (a) reuse Arm A's edges L_b (some bins may then hold fewer than M pairs), or
+  - (b) rebuild bins by the §7 step-3 algorithm on each arm's own n_eff.
+
+  E1 uses Arm A only and gives no evidence for either choice. P5 is decided before E3, from the actual n_eff distribution after Arm B/C weighting.
+
+**Revision-3 decisions (2026-10-04):**
+- **R3-1 (V6 design):** n-conditioned empirical calibration (candidate C-1) — §7 step 3 deterministic bins with M = 200, per-bin nearest-rank τ_A,b; §7 step 4 power by thinning. Basis (E-32 data, clean seeds only): var(Z) 29.0 and rising with n; a pair's silence propensity is persistent (first-half vs second-half residual correlation 0.76); in-sample FA at the revision-2 τ_A rises from 0.000 (n 14–27) to 0.339 (n ≥ 250).
+- **R3-2 (power target, option i):** if no bin reaches power ≥ 0.80, n_min is undefined and G1 fails; the 0.80 target and p_min are not changed. The ~0.41 model-based ceiling is a diagnostic only.
+- **R3-3 (V3-a):** minimum separation > ε + 12.5 m = 37.5 m, replacing the underived 2ε = 50 m rule; separations below 50 m are reported.
+- **R3-4 (status of validation):** V6 on seeds 12–21 is recalibration/development validation; the independent false-alarm assessment is G2b on seeds 2–11.
+- **R3-5 (reuse):** the existing E1 simulation outputs and O1 opportunity files are reused; the revision-2 calibration and validation files are kept unchanged as the historical record.
+- **R3-6 (diagnostic provenance):** the scripts that produced the design-basis diagnostics behind R3-1 and R3-3 are archived in `e1/diagnostics_rev3/` with their outputs. They are provenance only, not the revision-3 calibration implementation; the revision-2 diagnostics in `e1/diagnostics/` are unchanged.
+- **Unchanged by revision 3:** the O1 information boundary (§5, §6), opportunity construction for Arms A/B/C, the strata and merge rule, n_ref, the Z statistic, and checks V1, V2, V4, V7, V8 (V5 is extended, not changed).
+
+**Revision-2 points** — all four were resolved in revision 2 (2026-10-04). They are kept here as a record.
 
 - **P1: resolved** (revision 2): §7 calibration steps 1–6.
 - **P2: resolved** (revision 2): §11 attacker configuration. Q1: the `AttackMode=1` arm uses dropProbability 0.75. Q2: the AdversarialMotion arm uses AttackMode=0, dropProbability 0.75, adversarialMotion=true.
@@ -394,6 +450,8 @@ All four points were resolved in revision 2 (2026-10-04). They are kept here as 
 |---|---|
 | 2026-10-04 | Frozen specification written. Includes consistency-check corrections C1 (read-only peer EE), C2 (PACT peer set = all table entries) and C3 (Stage D outcome rule; rank before the hearing filter; 8 s timing rule). Open points P1–P4 recorded |
 | 2026-10-04 | Revision 2: P1 resolved (n_ref, nearest-rank τ_A, then n_min by Monte Carlo power at fixed τ_A; freezing before any attacker run is generated). P2 resolved: attackerFraction 0.2, AttackStart 0; `AttackMode=1` arm p = 0.75; AdversarialMotion arm AttackMode=0, p = 0.75, adversarialMotion=true (1.5 s reversal, fixed in code); matched plain control AttackMode=0, p = 0.75, adversarialMotion=false, replacing the realised-drop-budget matching rule. P3 resolved (own `t` record; check V8). P4 cross-links added. V6 made explicit. Final amendments: G5(b) is reported together with the realised malicious drop count, judged malicious-pair count and flagged malicious-pair count per E4 arm, as context only; the status block marks the specification frozen at revision 2 |
+| 2026-10-04 | E1 run under revision 2 (E-32; historical record commit `58cc50c`): **G1 failed** on V3 (minimum separation 39.9 m < 50 m) and V6 (pooled out-of-seed FA 0.191, one-sided lower bound 0.115) |
+| 2026-10-04 | Revision 3: decisions R3-1 to R3-6 (§13). §7 steps 3–6 and freezing replaced (deterministic n-bins, M = 200, per-bin τ_A,b, power by thinning, n_min with option (i), new JSON `e1_calibration_rev3.json`); bars and §8 thresholds made per-bin; V3 rule replaced (V3-a); V5 extended to the revision-3 calibration script; V6 rewritten for the binned procedure, with its bootstrap specification stated and its development-validation status; G2b named as the independent false-alarm assessment; per-bin calibration described as empirical at the nominal 0.05 level (not an exact guarantee); V6 bootstrap B = 10,000 and PCG64 seed 12345 fixed as reproducibility parameters; §11 E3 row made per-bin (binning: P5); open point P5 (Arm B/C binning) added, to be decided before E3; design-basis diagnostics archived in `e1/diagnostics_rev3/`. Superseded revision-2 text kept verbatim in §17 |
 
 ---
 
@@ -476,3 +534,122 @@ This is arithmetic only: no simulator run, no seed, no outcome data. It is kept 
 
 - **A structural fact.** With the published ψ = 0.5 and ξ = 0.3, a freeze requires both SS < 0.6 and CCQ < 0.6.
 - **A correction.** The handoff's historical values at 100 m — p = 0.913 at 20 dB and 0.057 at 5 dB — do not reproduce with the current formula, which gives 0.943 and 0.161.
+
+---
+
+## 17. Superseded revision-2 text (verbatim)
+
+Every passage of revision 2 (commit `c0d2cec`) that revision 3 replaced, copied verbatim from that commit,
+in document order. Line numbers refer to the revision-2 file.
+
+**Revision 2, Stage E — frozen specification (pre-implementation) (lines 4–6):**
+
+````text
+- **Frozen, revision 2** (2026-10-04; approved in session; decisions `../../RESEARCH_DECISIONS.md` D-13 to D-16; revision history in §14).
+- **Nothing is implemented:** no O1/O2 code, and E1 has not been run.
+- The only Stage E work done so far is the logging-only `[RXHDR]` change and its validation (§15, `../../EXPERIMENT_LOG.md` E-31).
+````
+
+**Revision 2, Stage E — frozen specification (pre-implementation) (lines 11–11):**
+
+````text
+- The open points P1–P4 are all resolved in revision 2 (§13).
+````
+
+**Revision 2, Stage E — frozen specification (pre-implementation) (lines 27–27):**
+
+````text
+13. Open points to decide before E1
+````
+
+**Revision 2, 7. O2: per-pair statistic and frozen baseline (lines 170–184):**
+
+````text
+3. **τ_A.** Compute Z for every honest calibration pair with n ≥ n_ref and sort ascending (N pairs).
+   τ_A = Z₍⌈0.95·N⌉₎ (nearest rank). A pair is flagged when Z > τ_A.
+4. **n_min,** with τ_A already fixed:
+   - For n = n_ref, n_ref + 1, …, n_cap (n_cap = the largest n of any honest calibration pair), estimate
+     power(n) by Monte Carlo with R = 10,000 synthetic pairs.
+   - Each synthetic pair has n opportunities. Strata are drawn i.i.d. from the empirical stratum mix of all
+     honest calibration opportunities; y ~ Bernoulli(q₁,s) with q₁,s = 1 − (1 − q_s)(1 − p_min), p_min = 0.75;
+     Z is computed with the calibration q_s.
+   - power(n) = the fraction with Z > τ_A. RNG: NumPy PCG64, seed 12345 (= BASE_SEED).
+   - n_min = the smallest n with power(n) ≥ 0.80.
+   - If no n ≤ n_cap qualifies, n_min is undefined and G1 fails (no adjustment).
+5. **Reported, never tuned:** the full power curve, the calibration FA among honest pairs with n ≥ n_min
+   at τ_A, and the over-dispersion of Z.
+6. **Other arms.** τ_B and τ_C use step 3 with their own weights (n_eff in place of n, n_eff ≥ n_ref) on the
+   same clean seeds. n_min is common to all arms (Arm A's, from step 4), applied to n_eff.
+````
+
+**Revision 2, 7. O2: per-pair statistic and frozen baseline (lines 188–191):**
+
+````text
+**Freezing.** Before any attacker run is generated, write one versioned JSON file containing:
+q_s, the merge map, q̄, n_ref, τ_A, the power curve, n_min, the Monte Carlo seed and R,
+the md5 of every calibration run's `stderr.log` and `v1_1.tr`, and the code commit hashes.
+Record the file's md5 in `../../EXPERIMENT_LOG.md`.
+````
+
+**Revision 2, 7. O2: per-pair statistic and frozen baseline (lines 205–205):**
+
+````text
+  - The TDR at τ_A has a 95% lower bound **above** the FA upper bound.
+````
+
+**Revision 2, 8. Common evidence layer per arm (lines 212–214):**
+
+````text
+| A | 1 | τ_A |
+| B | 0 if EE_{O,X}(t₀) < 0.3, otherwise 1 (the published freeze, applied per opportunity as a stand-in for the per-slot gate; a gated opportunity is excluded) | τ_B(Eb/N0) |
+| C | min(1, EE_X / median EE of O's peers): the existing PACT formula (S-07), unchanged | τ_C(Eb/N0) |
+````
+
+**Revision 2, 8. Common evidence layer per arm (lines 229–229):**
+
+````text
+**Thresholds.** τ_B and τ_C use the τ_A rule on the same clean seeds 12–21, per grid point. Arms are therefore compared at equal false-alarm rate on clean runs.
+````
+
+**Revision 2, 11. Experiment sequence (lines 296–296):**
+
+````text
+| **E1** | Clean simulation runs; offline O1/O2; checks V1–V7 (G1); calibrate and freeze q_s, merge map, τ_A, n_min | 12–21 |
+````
+
+**Revision 2, 12. Decision gates and predefined failure conclusions (lines 333–333):**
+
+````text
+| V3 | Upstream recovery error ≤ 12.5 m (the Stage D acceptance rule); minimum separation ≥ 50 m |
+````
+
+**Revision 2, 12. Decision gates and predefined failure conclusions (lines 335–336):**
+
+````text
+| V5 | Static audit: no ground-truth field reachable from observer code |
+| V6 | Leave-one-seed-out: for each seed in 12–21, rerun §7 steps 1–4 on the other nine seeds and measure FA on the left-out seed's judged honest pairs. Pooled FA is not significantly above 0.05 |
+````
+
+**Revision 2, 12. Decision gates and predefined failure conclusions (lines 348–348):**
+
+````text
+**G2b: Detection (E2).** The FA bar and detection bar of §7.
+````
+
+**Revision 2, 13. Open points to decide before E1 (lines 382–382):**
+
+````text
+## 13. Open points to decide before E1
+````
+
+**Revision 2, 13. Open points to decide before E1 (lines 384–384):**
+
+````text
+All four points were resolved in revision 2 (2026-10-04). They are kept here as a record.
+````
+
+**Revision 2, 11. Experiment sequence (line 298; replaced in the final revision-3 edits):**
+
+````text
+| **E3** | Offline replay of the EAQTE gate on the E1 traces across the grid: freeze fraction, joint SS/CCQ distribution, regimes, τ_B per grid point; evidence/EE causal test (G4) | 12–21 |
+````

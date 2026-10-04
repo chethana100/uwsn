@@ -1,0 +1,4 @@
+O1 classification margin: max |u_hat - f_U| over MATCH = 0.606 m; min over OTHER-UP = 39.9 m (epsilon = 25.0 m)
+   OTHER-UP opportunities with |u_hat - f_U| below 25.6 / 37.5 / 50 / 75 m: [0, 0, 88, 88]
+distinct transmitters of the same packet: 42512 pairs; min spacing 39.8 m; < 25.6 m: 0; < 37.5 m: 0; < 50 m: 77
+   node pairs involved in < 50 m spacings: {(12, (24, 76)): 77}

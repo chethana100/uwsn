@@ -376,7 +376,8 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
 - **Stage E (2026-10-04):**
   - The framework, arm labels, S1/S2 and seed allocation are approved (D-13 to D-16).
   - The `[RXHDR]` logging is done and validated (E-31).
-  - **O1/O2 not implemented; E1 not run.**
+  - E1 run under revision 2 failed G1 (E-32, commit `58cc50c`; its files are kept unchanged as the historical record).
+  - Revision 3 (README) redesigns the V6 calibration and the V3 rule. It is approved but not yet implemented; E1 re-evaluation under revision 3 is pending.
   - Frozen specification: `analysis/stageE/README.md` (O1/O2, strata, calibration procedure, bars, gates G1–G6, Eb/N0 grid, attacker configuration, open points, revision log).
 - Not yet run:
   - Online replay (`eaqte_online.py`, missing from this workspace)
