@@ -359,3 +359,35 @@ Diagnostic only; not a performance result.
 - **Frozen calibration file:** `analysis/stageE/e1/e1_calibration.json`, md5 `6504d1df09d5daaeef4e835611e424d4`.
 - **G1:** V1 PASS, V2 PASS, **V3 FAIL** (recovery error max 0.602 m passes; minimum separation 39.9 m < 50 m: 9 transmissions in seed 12, nodes 76 and 24 about 40 m apart, all > ε so no outcome misclassified), V4 PASS, V5 PASS, **V6 FAIL** (pooled out-of-seed FA 76/398 = 0.191, one-sided 95% lower bound 0.115 > 0.05), V7 PASS, V8 PASS.
 - **Status: G1 FAILS.** Per the frozen specification: the evidence layer is invalid as specified; stop and report; any fix is a new, separately approved design. E2–E5 not started; no attacker run generated.
+
+## 2026-10-05
+
+### E-33 — Stage E E1 re-evaluated under revision 3 (existing outputs, clean seeds 12–21)
+- **Specification:** `analysis/stageE/README.md` revision 3 (commit `e9ddf04`). No simulation rerun: the inputs are the existing `e1_opportunities.csv` files of E-32 (md5s identical to those recorded in `e1_calibration.json`). No attacker data.
+- **Code (new files, revision-2 files unchanged):** `analysis/stageE/e1/calibrate_rev3.py` (md5 `03a6ff9cb9b4bcfbc4dd6423b78aaa48`), `e1_validate_rev3.py` (`5537043236adf8f9519991e6ef6dadc2`). Reports: `e1_calibration_report_rev3.txt` (`ed55425aa2efaf9c0c27db09c36a36d7`), `e1_validation_rev3.txt` (`8b67d376761e067c99fa8c120f9441c4`).
+- **Frozen calibration file:** `analysis/stageE/e1/e1_calibration_rev3.json`, md5 **`f49e6f764088bd500ef302dc01a281c1`**. The revision-2 `e1_calibration.json` (`6504d1df…`) is unchanged.
+- **Calibration:** q̄ = 0.377979, n_ref = 14; 2,044 reference pairs in 9 bins (M = 200).
+
+  | Bin | Interval | N | τ_A,b | In-sample FA | Power |
+  |---|---|---|---|---|---|
+  | 1 | [14, 23) | 226 | 5.6230 | 0.0487 | 0.1481 |
+  | 2 | [23, 34) | 206 | 9.1624 | 0.0437 | 0.0442 |
+  | 3 | [34, 46) | 203 | 6.2561 | 0.0493 | 0.5342 |
+  | 4 | [46, 61) | 205 | 7.6931 | 0.0488 | 0.4711 |
+  | 5 | [61, 76) | 205 | 7.5924 | 0.0488 | 0.6409 |
+  | 6 | [76, 89) | 212 | 6.9467 | 0.0472 | 0.8672 |
+  | 7 | [89, 95) | 310 | 9.8010 | 0.0484 | 0.5895 |
+  | 8 | [95, 139) | 200 | 11.6756 | 0.0500 | 0.3658 |
+  | 9 | [139, ∞) | 277 | 14.0272 | 0.0469 | 0.6001 |
+
+  - **n_min = 76.** Only bin 6 reaches power ≥ 0.80. In-sample FA among pairs with n ≥ 76: 48/999 = 0.048.
+  - **Design issue (methodological, not a reporting issue):** power is strongly non-monotone in n. Bins 7–9, which are all judged at n ≥ 76, have power 0.590, 0.366 and 0.600. "Lower edge of the smallest qualifying bin" therefore does **not** guarantee ≥ 0.80 power for the judged population. Revision 4 is required.
+- **G1 checks:**
+  - V1, V2, V4, V7, V8: **PASS** (unchanged by revision 3; carried from E-32 after md5 verification of the files and inputs).
+  - V3-a: **PASS** (recovery error max 0.602 m ≤ 12.5 m; minimum separation 39.9 m > 37.5 m; nine separations < 50 m listed descriptively, all seed 12, nodes 76/24).
+  - V5 (extended to `calibrate_rev3.py`): **PASS**.
+  - **V6-A, false-alarm transfer: PASS.** Pooled out-of-seed FA 25/476 = 0.0525; one-sided 95% lower bound 0.0156 (cluster bootstrap B = 10,000, PCG64 seed 12345), not significantly above 0.05. Population: judged pairs of the five folds with a defined n_min (seeds 12, 16, 18, 19, 20).
+  - **V6-B, power feasibility: FAIL.** In 5/10 folds (seeds 13, 14, 15, 17, 21) no bin reaches power 0.80, so n_min is undefined and those folds have no valid complete calibration. The failed folds are **not** discarded.
+  - **V6 overall: FAIL. G1 (revision 3): FAIL.**
+  - The V6-A / V6-B split is the reporting classification decided on 2026-10-05. The revision-3 report files print a single "V6 FAIL".
+- **Status:** G1 fails. Revision 3 is not changed. E2–E5 not started; seeds 2–11 untouched.

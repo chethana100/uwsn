@@ -1,0 +1,33 @@
+Stage E E1 — REVISION 3 validation (G1 checks; frozen spec ../README.md §12, commit e9ddf04)
+Re-evaluation of the existing E1 outputs; no simulation rerun; no attacker data.
+
+Revision-2 files unchanged (md5): {'e1_validation.txt': True, 'e1_validate.py': True, 'observer.py': True, 'geom.py': True, 'truth.py': True, 'e1_calibration.json': True}; opportunity inputs identical to the revision-2 run: True
+V1, V2, V4, V7, V8 (unchanged by revision 3; carried from revision-2 e1_validation.txt): {'V1': 'PASS', 'V2': 'PASS', 'V4': 'PASS', 'V7': 'PASS', 'V8': 'PASS'}
+
+V3-a over 18632 unique responding transmissions: max recovery error 0.6019 m (<= 12.5); minimum separation 39.9 m (> 37.5): PASS
+   descriptive: separations < 50 m: 9 (run, X, src, pk, true upstream, nearby transmitter, separation m):
+      (12, 17, 76, 865, 76, 24, 40.0)
+      (12, 17, 76, 875, 76, 24, 39.9)
+      (12, 17, 76, 885, 76, 24, 40.0)
+      (12, 17, 76, 895, 76, 24, 39.9)
+      (12, 17, 76, 905, 76, 24, 40.0)
+      (12, 17, 76, 915, 76, 24, 39.9)
+      (12, 17, 76, 925, 76, 24, 40.0)
+      (12, 17, 76, 935, 76, 24, 39.9)
+      (12, 17, 76, 945, 76, 24, 40.0)
+
+V5 (extended to the revision-3 calibration script) — forbidden tokens in code (docstrings excluded) and imports:
+   observer.py: clean; forbidden tokens none; imports ['geom', 'sys, re, csv, math, bisect, collections as C']
+   geom.py: clean; forbidden tokens none; imports ['math']
+   calibrate.py: clean; forbidden tokens none; imports ['numpy as np', 'sys, os, csv, json, math, hashlib, subprocess, datetime, collections as C']
+   calibrate_rev3.py: clean; forbidden tokens none; imports ['calibrate', 'numpy as np', 'sys, os, json, math, bisect, hashlib, subprocess, datetime, collections as C']
+   observe() receives only the observer's own decoded copies, own t records and own mobility rows: True
+   observer.py and geom.py unchanged since revision 2 (O1 boundary intact): True / True
+   e1_validate_rev3.py is evaluation code (imports truth.py for V3-a); modules importing it: none
+V5: PASS
+
+V6 (development/recalibration validation; independent FA assessment = G2b on seeds 2-11): pooled FA 25/476 = 0.0525, one-sided lower bound 0.0156; all folds evaluable False: FAIL
+n_min: 76
+
+G1 summary: V1 PASS, V2 PASS, V3-a PASS, V4 PASS, V5 PASS, V6 FAIL, V7 PASS, V8 PASS, n_min defined PASS
+G1 (revision 3): FAIL
