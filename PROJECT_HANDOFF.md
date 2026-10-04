@@ -377,7 +377,7 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
   - The framework, arm labels, S1/S2 and seed allocation are approved (D-13 to D-16).
   - The `[RXHDR]` logging is done and validated (E-31).
   - **O1/O2 not implemented; E1 not run.**
-  - Before E1 code, write the full approved specification to `analysis/stageE/`: O1/O2, strata, bars, decision gates G1–G6, and the Eb/N0 grid {15, 20, 24.5, 27.5, 31.1, 34.5, 37.5, 40, 45, 50} dB.
+  - Frozen specification: `analysis/stageE/README.md` (O1/O2, strata, calibration procedure, bars, gates G1–G6, Eb/N0 grid, attacker configuration, open points, revision log).
 - Not yet run:
   - Online replay (`eaqte_online.py`, missing from this workspace)
   - MLAR sweep (`uwsn_vbf_compare`)
