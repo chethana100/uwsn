@@ -1,0 +1,21 @@
+alpha(25kHz) dB/km = 6.1048
+p(1000m,40dB) = 0.9368
+monotone check: p decreasing on 1..1000 m at 40 dB: True
+bound EE >= 0.5*(1-tanh(1/4))*p(1000) = 0.5*0.7551*0.9368 = 0.3537
+freeze-feasibility thresholds at d=1000 m (Eb/N0 below which a freeze becomes POSSIBLE):
+  SS=0, var=1/4 (worst case)             needs p < 0.7946  -> Eb/N0 < 34.53 dB
+  SS=0, var=0                            needs p < 0.6000  -> Eb/N0 < 31.05 dB
+  SS=0.5 (no-velocity default), var=0    needs p < 0.1000  -> Eb/N0 < 24.48 dB
+SS >= 0.6 => EE >= 0.3 for ANY CCQ (no freeze possible regardless of Eb/N0)
+p(1000 m) with spreading distance in metres, 40 dB: 2.468e-127  (equivalent shift -45.0 dB)
+EAQTE-scale d=100 m, Eb/N0=5 dB: p=0.1607
+EAQTE-scale d=100 m, Eb/N0=20 dB: p=0.9434
+EAQTE-scale d=100 m, Eb/N0=40 dB: p=0.9994
+Eb/N0=10 dB: p(100m)=0.5593 p(500m)=0.0000 p(1000m)=0.0000
+Eb/N0=20 dB: p(100m)=0.9434 p(500m)=0.3207 p(1000m)=0.0017
+Eb/N0=30 dB: p(100m)=0.9942 p(500m)=0.8921 p(1000m)=0.5216
+Eb/N0=35 dB: p(100m)=0.9982 p(500m)=0.9645 p(1000m)=0.8137
+Eb/N0=40 dB: p(100m)=0.9994 p(500m)=0.9886 p(1000m)=0.9368
+Eb/N0=50 dB: p(100m)=0.9999 p(500m)=0.9989 p(1000m)=0.9935
+k=1.0: p(1000m,40dB)=0.9368
+k=2.0: p(1000m,40dB)=0.9368

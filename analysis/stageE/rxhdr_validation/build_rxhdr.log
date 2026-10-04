@@ -1,0 +1,27 @@
+[  0%] Building CXX object src/aqua-sim-ng/CMakeFiles/libaqua-sim-ng-obj.dir/model/aqua-sim-routing-trustq-vbf.cc.o
+In file included from [01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.cc:11[m[K:
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/../../../scratch/mcm-mobility-model.h:[m[K In constructor ‘[01m[Kns3::McmMobilityModel::McmMobilityModel()[m[K’:
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/../../../scratch/mcm-mobility-model.h:302:10:[m[K [01;35m[Kwarning: [m[K‘[01m[Kns3::McmMobilityModel::m_omega[m[K’ will be initialized after [[01;35m[K-Wreorder[m[K]
+  302 |   double [01;35m[Km_omega[m[K;
+      |          [01;35m[K^~~~~~~[m[K
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/../../../scratch/mcm-mobility-model.h:294:13:[m[K [01;35m[Kwarning: [m[K  ‘[01m[Kbool ns3::McmMobilityModel::m_adversarialMotion[m[K’ [[01;35m[K-Wreorder[m[K]
+  294 |   bool      [01;35m[Km_adversarialMotion[m[K;   // [EAQTE Step 3] capable of triggering reversal
+      |             [01;35m[K^~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/../../../scratch/mcm-mobility-model.h:143:3:[m[K [01;35m[Kwarning: [m[K  when initialized here [[01;35m[K-Wreorder[m[K]
+  143 |   [01;35m[KMcmMobilityModel[m[K ()
+      |   [01;35m[K^~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.cc:3[m[K:
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.h:[m[K In constructor ‘[01m[Kns3::AquaSimTrustQVBF::AquaSimTrustQVBF()[m[K’:
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.h:84:10:[m[K [01;35m[Kwarning: [m[K‘[01m[Kns3::AquaSimTrustQVBF::m_pactEnabled[m[K’ will be initialized after [[01;35m[K-Wreorder[m[K]
+   84 |   bool   [01;35m[Km_pactEnabled[m[K;
+      |          [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.h:52:12:[m[K [01;35m[Kwarning: [m[K  ‘[01m[Kdouble ns3::AquaSimTrustQVBF::m_dropProbability[m[K’ [[01;35m[K-Wreorder[m[K]
+   52 |   double   [01;35m[Km_dropProbability[m[K;
+      |            [01;35m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/aswinlaks/ns-allinone-3.41/ns-3.41/src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.cc:168:1:[m[K [01;35m[Kwarning: [m[K  when initialized here [[01;35m[K-Wreorder[m[K]
+  168 | [01;35m[KAquaSimTrustQVBF[m[K::AquaSimTrustQVBF ()
+      | [01;35m[K^~~~~~~~~~~~~~~~[m[K
+[  0%] Linking CXX shared library ../../../build/lib/libns3.41-aqua-sim-ng-default.so
+Consolidate compiler generated dependencies of target scratch_uwsn-trustq-attack
+Finished executing the following commands:
+/usr/bin/cmake --build /home/aswinlaks/ns-allinone-3.41/ns-3.41/cmake-cache -j 7 --target scratch_uwsn-trustq-attack

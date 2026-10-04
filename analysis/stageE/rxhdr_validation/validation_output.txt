@@ -1,0 +1,24 @@
+== c_tq_a
+records=28819  records where field differs: {'token': 28819, 'ts': 0, 'range': 28819}  records differing after masking token/ts/range: 0
+  [RXHDR] lines 26303 (duplicate keys 0); trace r-records 26303; keys only in RXHDR 0, only in trace 0
+  (a) vs printed trace: component mismatches beyond print resolution none; target != (1500,1500,0): 0
+  transmissions heard 2516; with >1 distinct decoded (f,d) across receivers: 0
+  (b) vs Stage D reconstruction: {'amb_d_mismatch': 15, 'amb_f_mismatch': 7, 'amb_n': 40, 'exact_n': 2476}
+  (c) upstream recovery from decoded f,d: n=1566, max err 0.601 m, median 0.300 m, >25 m: 0; upstream copy never decoded by anyone: 0
+  ambiguous transmissions: |f diff| n=40 max=0.3005 m nonzero=7; |d diff| n=40 max=0.3005 m nonzero=15; |recovered upstream diff| n=40 max=0.3005 m nonzero=22
+== d_p100
+records=28589  records where field differs: {'token': 28589, 'ts': 25, 'range': 28589}  records differing after masking token/ts/range: 0
+  [RXHDR] lines 26180 (duplicate keys 0); trace r-records 26180; keys only in RXHDR 0, only in trace 0
+  (a) vs printed trace: component mismatches beyond print resolution none; target != (1500,1500,0): 0
+  transmissions heard 2409; with >1 distinct decoded (f,d) across receivers: 0
+  (b) vs Stage D reconstruction: {'amb_d_mismatch': 15, 'amb_f_mismatch': 7, 'amb_n': 34, 'exact_n': 2375}
+  (c) upstream recovery from decoded f,d: n=1459, max err 0.601 m, median 0.300 m, >25 m: 0; upstream copy never decoded by anyone: 0
+  ambiguous transmissions: |f diff| n=34 max=0.3005 m nonzero=7; |d diff| n=34 max=0.3005 m nonzero=15; |recovered upstream diff| n=34 max=0.3005 m nonzero=22
+== d_p075
+records=28539  records where field differs: {'token': 28539, 'ts': 25, 'range': 28539}  records differing after masking token/ts/range: 0
+  [RXHDR] lines 26106 (duplicate keys 0); trace r-records 26106; keys only in RXHDR 0, only in trace 0
+  (a) vs printed trace: component mismatches beyond print resolution none; target != (1500,1500,0): 0
+  transmissions heard 2433; with >1 distinct decoded (f,d) across receivers: 0
+  (b) vs Stage D reconstruction: {'amb_d_mismatch': 15, 'amb_f_mismatch': 7, 'amb_n': 36, 'exact_n': 2397}
+  (c) upstream recovery from decoded f,d: n=1483, max err 0.601 m, median 0.300 m, >25 m: 0; upstream copy never decoded by anyone: 0
+  ambiguous transmissions: |f diff| n=36 max=0.3005 m nonzero=7; |d diff| n=36 max=0.3005 m nonzero=15; |recovered upstream diff| n=36 max=0.3005 m nonzero=22

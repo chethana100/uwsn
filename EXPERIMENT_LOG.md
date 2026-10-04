@@ -320,3 +320,31 @@ Diagnostic only; not a performance result.
 - **Runs regenerated** with the same binary into `~/uwsn-runs/stageCD_seed1/` (persistent, outside the repo): `c1_tq`, `c_tq_a`, `c_smoke`, `d_p100`, `d_p075`. Headline counts match E-24..E-27.
 - **Identity check:** the rebuilt scripts' outputs (`analysis/stageD_tables.txt`, `stageD_recovery.txt`, `stageC_v23.txt`, `stageC_compare.txt`) are **identical** under `diff` to the outputs printed before the restart (transcribed to `~/uwsn-runs/stageCD_seed1/expected_from_transcript/`).
 - This is a functional identity check, not a checksum of the original files.
+
+---
+
+## 2026-10-04
+
+### E-31 — `[RXHDR]` receiver-side decoded-header logging: validation (decision D-15)
+- **Purpose:** before Stage E, replace the Stage D offline header rebuild, which used simulator ground truth, with the header values each receiver actually decoded. Logging only.
+- **Code:**
+  - aqua-sim-ng commit `41c67c3`: 8 inserted lines in `AquaSimTrustQVBF::Recv`, after `packet->PeekHeader (vbh)` on the received-packet branch.
+  - `.cc` md5 `953629a5…`; library `871c50fc…`; scenario binary unchanged (`54e444ed…`).
+  - Build: only the known `-Wreorder` warnings.
+- **Runs:** seed/run 1, DEVELOPMENT/DIAGNOSTIC.
+  - The three Stage D configurations (`c_tq_a`, `d_p100`, `d_p075`; E-24/E-27 arguments) were rerun into `~/uwsn-runs/rxhdr_seed1/` (outside the repo, not archived).
+  - Compared with `~/uwsn-runs/stageCD_seed1/`.
+- **Behaviour unchanged:**
+  - energy, mobility, trust, observed, meta, stdout: byte-identical;
+  - stderr: identical after removing `[RXHDR]` lines;
+  - trace: 0 differing records after masking `token=`, `ts=`, `range=`.
+- **Trace defect (pre-existing, Aqua-Sim-NG):** VBHeader `token`, `ts` and `range` are uninitialised.
+  - The patch moved the stack garbage in `token` (30 → 0 / 2799601 / 4083687). `ts` also differs in 25 records per attacker run.
+  - No code reads the token. These fields are masked permanently (D-16) and not fixed.
+- **Coverage:** `[RXHDR]` lines = trace `r` records, one-to-one (26303 / 26180 / 26106).
+- **Decoded values:**
+  - vs the printed trace: 0 mismatches beyond 6-digit print resolution.
+  - vs the Stage D rebuild: 0 f and 0 d mismatches on all non-ambiguous transmissions. The 34–40 ambiguous transmissions per run have mismatches of at most 0.30 m, which cannot change any MATCH/OTHER-UP outcome.
+  - Upstream recovery from the decoded values alone: **max 0.601 m**, median 0.300 m. This reproduces E-28, now without the ground-truth upstream that the Stage D rebuild used.
+- **Archive:** `analysis/stageE/rxhdr_validation/` (original scripts and outputs) and `analysis/stageE/README.md`.
+- **Status:** PASS; accepted as the final D1 change. Stage E (O1/O2, E1) not started.

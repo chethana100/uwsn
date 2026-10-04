@@ -1,7 +1,7 @@
 # UASN Trust-Aware HH-VBF — Project Handoff (consolidated)
 
-Last updated: 2026-10-03.
-Sources: Handoff 1 (first chat), Handoff 2 (second chat), and direct inspection of this workspace on 2026-10-02/03.
+Last updated: 2026-10-04.
+Sources: Handoff 1 (first chat), Handoff 2 (second chat), and direct inspection of this workspace on 2026-10-02/03/04.
 Companion files: `EXPERIMENT_LOG.md` (every run), `RESEARCH_DECISIONS.md` (every decision).
 
 **Status tags used below**
@@ -61,13 +61,19 @@ These parameters closely match T-SAPR (Zhu et al., Ad Hoc Networks 2023) Table 2
 
 Keep them separate in code, filenames, logs and the writeup.
 
+**Arm labels (Stage E; mandatory everywhere since 2026-10-04, `RESEARCH_DECISIONS.md` D-13):**
+- **Arm 0** = plain HH-VBF
+- **Arm A** = observer-based trust, no environmental gate
+- **Arm B** = observer-based trust + EAQTE gate
+- **Arm C** = observer-based trust + PACT
+
 ---
 
 ## 3. Key files
 
 | Path | Contents |
 |---|---|
-| `src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.{h,cc}` | TrustQVBF: trust priority, observer, EAQTE gate, PACT, attacker, `[DIAG]` logging |
+| `src/aqua-sim-ng/model/aqua-sim-routing-trustq-vbf.{h,cc}` | TrustQVBF: trust priority, observer, EAQTE gate, PACT, attacker, `[DIAG]` and `[RXHDR]` logging |
 | `src/aqua-sim-ng/model/aqua-sim-routing-vbf.cc` | Aqua-Sim-NG base VBF/HH-VBF (reference; not edited) |
 | `scratch/uwsn-trustq-attack.cc` | Main scenario |
 | `scratch/mcm-mobility-model.h` | MCM mobility + adversarial motion (header-only) |
@@ -88,6 +94,17 @@ Keep them separate in code, filenames, logs and the writeup.
 | 32+ | Free per Handoff 2. **The 40-seed batch from the other chat used unknown seeds.** Confirm before using any of 32–40. |
 
 Run indices present in this workspace: 1–20 only (VERIFIED 2026-10-03).
+
+**Stage E allocation (approved 2026-10-04, D-14):**
+
+| Seeds | Use |
+|---|---|
+| 12–21 | Clean calibration (E1, E3) |
+| 2–11 | E2 held-out observer test |
+| 22–31 | E4 attacker arms |
+| **41–50** | **E5 confirmatory (new)** |
+| 1 | Development only |
+| 32–40 | Unused (D-08) |
 
 ---
 
@@ -139,6 +156,9 @@ Other attributes can only be set as `--ns3::AquaSimTrustQVBF::<Name>=<value>`.
 
 - `[EAQTE] TX/RX`, `[OBSERVER] watch/CUSTODY/DEVIATION/TIE/MODELMISS/TIMEOUT/DROP`, `[EE]`, `[SSCCQ]`, `[EAQTE-FREEZE]`, `[EAQTE-ATTEMPT]`, `[PACT]`, `[EAQTE-SS]`, `[EAQTE-CCQ]`, `[RANGE]`.
 - Added 2026-10-02 (logging-only, `// [DIAG]`, 28 lines): `[DECISION]`, `[HOLD]`, `[VERDICT]`.
+- Added 2026-10-04 (logging-only, 8 lines, submodule `41c67c3`, D-15): `[RXHDR] node= tx= src= pk= f= d= tgt= t=`.
+  - It records the exact decoded header of every received copy at 17 significant digits; `d` is still wrapped (unwrap: v > 2147483.648 ⇒ v − 4294967.296).
+  - It is one-to-one with the trace `r` records. It is the Stage E observer input.
 
 ### 5.5 Run directly (VERIFIED)
 
@@ -262,9 +282,15 @@ The CCQ variance window is "the last 10 *calls*", including logging calls and PA
 - ns-3 assigns each RNG object a stream when it is created.
 - TrustQVBF creates one extra RNG per node (`m_dropRand`). That shifts the MAC backoff streams relative to base VBF, so different arms are not paired at the level of random draws unless streams are pinned.
 
-### 7.10 VBHeader `range=` field
+### 7.10 VBHeader `range=`, `token=`, `ts=` fields
 
 Uninitialized. It differs between identical runs, so traces must be compared with `range=` masked.
+
+**Extended 2026-10-04 (D-16, E-31):**
+- The `VBHeader` constructor initialises only `m_messType`, so `token` and `ts` are uninitialised too.
+- Their garbage changes when unrelated code changes stack layout; the `[RXHDR]` patch changed `token` in every record.
+- Nothing reads them.
+- **Behavioural trace comparisons permanently mask `token`, `ts` and `range`.** This pre-existing Aqua-Sim-NG defect is deliberately not fixed. Masked comparison script: `analysis/stageE/rxhdr_validation/cmp_masked.py`.
 
 ### 7.12 The sink is not fixed (VERIFIED 2026-10-03, E-11)
 
@@ -346,7 +372,12 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
 
 ## 10. Open items
 
-- Stage plan A1 → A2 → B → C → D (see `RESEARCH_DECISIONS.md` D-09). Stages run one at a time, with a report after each.
+- Stage plan A1 → A2 → B → C → D (see `RESEARCH_DECISIONS.md` D-09). Stages run one at a time, with a report after each. **Done.**
+- **Stage E (2026-10-04):**
+  - The framework, arm labels, S1/S2 and seed allocation are approved (D-13 to D-16).
+  - The `[RXHDR]` logging is done and validated (E-31).
+  - **O1/O2 not implemented; E1 not run.**
+  - Before E1 code, write the full approved specification to `analysis/stageE/`: O1/O2, strata, bars, decision gates G1–G6, and the Eb/N0 grid {15, 20, 24.5, 27.5, 31.1, 34.5, 37.5, 40, 45, 50} dB.
 - Not yet run:
   - Online replay (`eaqte_online.py`, missing from this workspace)
   - MLAR sweep (`uwsn_vbf_compare`)
