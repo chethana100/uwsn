@@ -1,6 +1,6 @@
 # UASN Trust-Aware HH-VBF — Project Handoff (consolidated)
 
-Last updated: 2026-10-04.
+Last updated: 2026-10-05.
 Sources: Handoff 1 (first chat), Handoff 2 (second chat), and direct inspection of this workspace on 2026-10-02/03/04.
 Companion files: `EXPERIMENT_LOG.md` (every run), `RESEARCH_DECISIONS.md` (every decision).
 
@@ -378,11 +378,17 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
   - The `[RXHDR]` logging is done and validated (E-31).
   - E1 run under revision 2 failed G1 (E-32, commit `58cc50c`; its files are kept unchanged as the historical record).
   - Revision 3 (README) redesigned the V6 calibration and the V3 rule. E1 re-evaluated under revision 3 failed G1 (E-33, commit `b016a9a`): V6-A false-alarm transfer passed, V6-B power feasibility failed (n_min undefined in 5/10 folds). Its files are kept unchanged as the historical record.
-  - **Revision 4 is frozen at commit `8a0ff2f`** (D-18): rate-scale statistic r_w, isotonic per-bin thresholds, exact Arm-A power with a bootstrap lower bound, P-suffix n_min calibrated on Arm A only and applied to Arms B/C through n_eff (Option A; no power claim for B/C). P5 is still open for B/C binning/judging details.
-  - **Revision 4 is not yet implemented, and E1 has not been rerun or re-evaluated under it. No revision-4 validation result exists; G1 has not passed under any revision.** The next implementation must follow the frozen revision-4 README exactly, as new files that leave the revision-2 and revision-3 records untouched.
-  - Attacker seeds stay sealed until G1 passes: no run on seeds 2–11 (or 22–31, 41–50) before then.
+  - **Revision 4 is frozen at commit `8a0ff2f`** (D-18): rate-scale statistic r_w, isotonic per-bin thresholds, exact Arm-A power with a bootstrap lower bound, P-suffix n_min calibrated on Arm A only and applied to Arms B/C through n_eff (Option A; no power claim for B/C). P5 (B/C binning/judging) was later resolved by C-d (option b).
+  - **Revision-4 E1 evaluation recorded at commit `103e671`** (E-34; new files only, revision-2/3 records untouched): V6-A false-alarm transfer passed (pooled 110/2,057 = 0.0535, not significantly above 0.05; lower bound 0.0297); **V6-B power feasibility failed** (n_min undefined in the full calibration and all 10 folds), **so G1 failed under revision 4. The D4-5 stop rule was triggered**, ending the revision-4 power-guarantee route. G1 has not passed under any revision.
+  - **C-d was then adopted as a new evaluation framework after the D4-5 stop, and is formally frozen at commit `362cda7`** (D-19; `analysis/stageE/CD_EVALUATION_FRAMEWORK.md`): relative endpoints (G5 primary blind-spot contrast I < 0 with G5(a) as a required co-condition; G6 Δ_CB > 0 with a zero-margin false-alarm guardrail), gated by G1′. **C-d does not retroactively make G1 pass and provides no 0.80 (or any) power guarantee for any arm.** Revision 4 remains frozen at `8a0ff2f`.
+  - **The E2 specification is formally frozen at commit `a87ffbc`** (D-20; `analysis/stageE/E2_SPEC.md`), before any E2 data exist. It fixes every E2 detail the frozen sources leave open (populations, labels, the corrected occurrence-specific cluster bootstrap, bound sidedness, G2/G2b decision rules, ceiling table), with each rule tagged as frozen, logically implied or proposed interpretation. Revision 4 (`8a0ff2f`), C-d (`362cda7`) and all E1 records are unchanged by it.
+  - **Next permitted stage: E2 (seeds 2–11, Arm A), executed exactly as the frozen E2 specification states; E2 has not started.** Seeds 2–11 were to stay sealed until C-d was frozen; that freeze is now complete, and seeds 2–11 remain unopened. No `e2_evaluate.py`, no E2 raw runs and no E2 results exist. Seeds 22–31 and 41–50 remain gated by the C-d order E2 → E3 → E4 → E5 and its gates.
+  - **E3 does not start automatically after E2.** It requires explicit approval after the E2 result and gates (G2, G2b) have been reviewed (`E2_SPEC.md` E2-14).
+  - **Open before E4:** C-d §4.1 draws nodes for each drawn seed position but states the pair multiplicity as (count of seed) × (count of X within that seed), which is inconsistent when a seed is drawn more than once (recorded in `E2_SPEC.md` §3 and D-20). It requires a separately approved clarification before E4. C-d itself is not modified; E2 does not use C-d §4.1.
   - Code state for Stage E: aqua-sim-ng submodule at `41c67c3` (`[RXHDR]` logging only), clean; no other C++ change is permitted during E1–E5 (S2).
   - Frozen specification: `analysis/stageE/README.md` (O1/O2, strata, calibration procedure, bars, gates G1–G6, Eb/N0 grid, attacker configuration, open points, revision log).
+  - Evaluation framework: `analysis/stageE/CD_EVALUATION_FRAMEWORK.md` (C-d, D-19) is authoritative for E2–E5 where it supersedes revision-4 rules; the revision-4 README remains authoritative for everything C-d does not supersede.
+  - E2 specification: `analysis/stageE/E2_SPEC.md` (D-20) is authoritative for E2 execution. It changes nothing in the revision-4 README or C-d; where they and it differ, they win and E2 stops for review.
 - Not yet run:
   - Online replay (`eaqte_online.py`, missing from this workspace)
   - MLAR sweep (`uwsn_vbf_compare`)
