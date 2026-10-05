@@ -1,0 +1,2181 @@
+{
+ "spec": "analysis/stageE/E2_SPEC.md (frozen at commit a87ffbc; D-20)",
+ "status": "E2 held-out Arm-A evaluation",
+ "created_utc": "2026-10-05T16:26:56Z",
+ "seeds": [
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "roots": {
+  "p075": "/home/aswinlaks/uwsn-runs/stageE/E2/p075",
+  "p100": "/home/aswinlaks/uwsn-runs/stageE/E2/p100"
+ },
+ "frozen": {
+  "n_ref": 14,
+  "edges_L": [
+   14,
+   23,
+   34,
+   46,
+   61,
+   76,
+   89,
+   95,
+   139
+  ],
+  "tau_A_b": [
+   0.6667795212943134,
+   0.6667795212943134,
+   0.4969825078271633,
+   0.4969825078271633,
+   0.43575356720447084,
+   0.43575356720447084,
+   0.43575356720447084,
+   0.43575356720447084,
+   0.4239204803487851
+  ],
+  "n_max": 554,
+  "fa_bar": 0.05,
+  "auc_bar": 0.7,
+  "auc_null": 0.5,
+  "g2_min_pairs": 43,
+  "g2_min_nodes": 10,
+  "percentiles": {
+   "fa_lb": 5.0,
+   "fa_ub": 97.5,
+   "tdr_lb": 2.5,
+   "auc_lb": 2.5
+  },
+  "percentile_method": "linear"
+ },
+ "population_p075": {
+  "judged_honest_pairs": 1383,
+  "judged_active_malicious_pairs": 306,
+  "distinct_seed_X_in_D": 36,
+  "per_bin": {
+   "honest": {
+    "1": {
+     "judged": 143,
+     "flagged": 5
+    },
+    "2": {
+     "judged": 136,
+     "flagged": 4
+    },
+    "3": {
+     "judged": 203,
+     "flagged": 11
+    },
+    "4": {
+     "judged": 155,
+     "flagged": 8
+    },
+    "5": {
+     "judged": 119,
+     "flagged": 8
+    },
+    "6": {
+     "judged": 93,
+     "flagged": 7
+    },
+    "7": {
+     "judged": 175,
+     "flagged": 1
+    },
+    "8": {
+     "judged": 185,
+     "flagged": 23
+    },
+    "9": {
+     "judged": 174,
+     "flagged": 6
+    }
+   },
+   "active_malicious": {
+    "1": {
+     "judged": 51,
+     "flagged": 3
+    },
+    "2": {
+     "judged": 46,
+     "flagged": 0
+    },
+    "3": {
+     "judged": 32,
+     "flagged": 11
+    },
+    "4": {
+     "judged": 49,
+     "flagged": 12
+    },
+    "5": {
+     "judged": 34,
+     "flagged": 19
+    },
+    "6": {
+     "judged": 10,
+     "flagged": 3
+    },
+    "7": {
+     "judged": 3,
+     "flagged": 2
+    },
+    "8": {
+     "judged": 24,
+     "flagged": 20
+    },
+    "9": {
+     "judged": 57,
+     "flagged": 35
+    }
+   }
+  },
+  "judged_above_n_max": []
+ },
+ "point": {
+  "FA": 0.05278380332610268,
+  "TDR": 0.3431372549019608,
+  "AUC": 0.9055052245048417,
+  "FA_flagged": 73,
+  "TDR_flagged": 105
+ },
+ "bootstrap": {
+  "B": 10000,
+  "generator": "numpy.random.PCG64",
+  "seed": 12345,
+  "hierarchy": "seeds, then X nodes within each seed occurrence; O not resampled",
+  "multiplicity": "m(seed, X) = sum of X's counts over all occurrences of that seed",
+  "node_universe": {
+   "2": [
+    4,
+    7,
+    16,
+    18,
+    25,
+    27,
+    30,
+    38,
+    40,
+    56,
+    58,
+    60,
+    65,
+    75,
+    79,
+    80,
+    85,
+    99
+   ],
+   "3": [
+    11,
+    18,
+    19,
+    33,
+    43,
+    49,
+    54,
+    64,
+    65,
+    71,
+    72,
+    84,
+    88,
+    95
+   ],
+   "4": [
+    5,
+    6,
+    8,
+    10,
+    22,
+    24,
+    26,
+    30,
+    31,
+    32,
+    33,
+    34,
+    42,
+    45,
+    51,
+    63,
+    67,
+    68,
+    69,
+    77,
+    85,
+    91,
+    93,
+    98
+   ],
+   "5": [
+    14,
+    24,
+    28,
+    39,
+    40,
+    45,
+    56,
+    58,
+    66,
+    69,
+    70,
+    73,
+    79,
+    83,
+    88,
+    90,
+    92,
+    94,
+    97,
+    99
+   ],
+   "6": [
+    8,
+    11,
+    12,
+    16,
+    19,
+    22,
+    26,
+    34,
+    44,
+    50,
+    56,
+    57,
+    60,
+    64,
+    69,
+    70,
+    72,
+    75,
+    80,
+    82,
+    84,
+    89,
+    95,
+    96,
+    100
+   ],
+   "7": [
+    5,
+    8,
+    18,
+    22,
+    24,
+    29,
+    32,
+    40,
+    46,
+    63,
+    66,
+    72,
+    78,
+    81,
+    86,
+    93,
+    99
+   ],
+   "8": [
+    4,
+    12,
+    23,
+    24,
+    46,
+    47,
+    50,
+    51,
+    55,
+    61,
+    63,
+    66,
+    70,
+    76,
+    77,
+    79,
+    81,
+    82,
+    97
+   ],
+   "9": [
+    3,
+    17,
+    20,
+    21,
+    30,
+    56,
+    64,
+    68,
+    91,
+    93,
+    98
+   ],
+   "10": [
+    2,
+    7,
+    23,
+    26,
+    38,
+    42,
+    60,
+    71,
+    72,
+    74,
+    76,
+    80,
+    84,
+    87,
+    88,
+    91,
+    92,
+    94,
+    96,
+    99
+   ],
+   "11": [
+    2,
+    4,
+    7,
+    11,
+    22,
+    39,
+    76,
+    78,
+    81,
+    93
+   ]
+  },
+  "zero_denominator_replicates": {
+   "fa": 0,
+   "tdr": 0,
+   "auc": 0
+  },
+  "FA_lb_5": 0.03040412247690729,
+  "FA_ub_97_5": 0.08728989763061103,
+  "TDR_lb_2_5": 0.0845737976782753,
+  "AUC_lb_2_5": 0.8463502019428865,
+  "descriptive": {
+   "TDR_ub_97_5": 0.5766438910086263,
+   "AUC_ub_97_5": 0.9457317960194668
+  }
+ },
+ "decision": {
+  "G2": {
+   "judged_active_malicious_pairs": 306,
+   "distinct_seed_X": 36,
+   "pass": true
+  },
+  "G2b": {
+   "item1_fa": true,
+   "item2_auc": true,
+   "item3_tdr_vs_fa": false,
+   "pass": false
+  },
+  "outcome": "G2b FAIL: the roadmap stops; Option C discussion follows (E3-E5 do not run)",
+  "conclusions": [
+   "Oracle-free overhearing evidence does not separate droppers from honest nodes at the declared false-alarm rate."
+  ]
+ },
+ "ceiling": {
+  "p075": {
+   "role": "descriptive, alongside the ceiling (E2-10)",
+   "per_run": [
+    {
+     "seed": 2,
+     "drops": 86,
+     "drops_observable": 58,
+     "drops_observable_O_eq_U": 51,
+     "drops_observable_O_ne_U": 58,
+     "frac_observable": 0.6744186046511628,
+     "frac_observable_O_eq_U": 0.5930232558139535,
+     "frac_observable_O_ne_U": 0.6744186046511628,
+     "malicious": [
+      3,
+      8,
+      22,
+      23,
+      31,
+      39,
+      41,
+      48,
+      49,
+      53,
+      57,
+      59,
+      64,
+      74,
+      78,
+      80,
+      81,
+      91,
+      93,
+      96
+     ],
+     "active_malicious": [
+      23,
+      80
+     ],
+     "inactive_malicious": [
+      3,
+      8,
+      22,
+      31,
+      39,
+      41,
+      48,
+      49,
+      53,
+      57,
+      59,
+      64,
+      74,
+      78,
+      81,
+      91,
+      93,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [
+       23
+      ],
+      "detected": [
+       80
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 17,
+     "frac_honest_judged": 0.21518987341772153,
+     "tdr_pairs": 0.9,
+     "judged_active_pairs": 10,
+     "flagged_active_pairs": 9,
+     "share_active_judged": 0.5,
+     "system_coverage": 0.45
+    },
+    {
+     "seed": 3,
+     "drops": 371,
+     "drops_observable": 234,
+     "drops_observable_O_eq_U": 230,
+     "drops_observable_O_ne_U": 230,
+     "frac_observable": 0.6307277628032345,
+     "frac_observable_O_eq_U": 0.6199460916442049,
+     "frac_observable_O_ne_U": 0.6199460916442049,
+     "malicious": [
+      3,
+      4,
+      8,
+      9,
+      11,
+      19,
+      39,
+      46,
+      51,
+      53,
+      54,
+      55,
+      66,
+      68,
+      69,
+      75,
+      76,
+      91,
+      92,
+      95
+     ],
+     "active_malicious": [
+      11,
+      19,
+      54,
+      95
+     ],
+     "inactive_malicious": [
+      3,
+      4,
+      8,
+      9,
+      39,
+      46,
+      51,
+      53,
+      55,
+      66,
+      68,
+      69,
+      75,
+      76,
+      91,
+      92
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [],
+      "detected": [
+       19
+      ],
+      "missed": [
+       11,
+       54,
+       95
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 10,
+     "frac_honest_judged": 0.12658227848101267,
+     "tdr_pairs": 0.1891891891891892,
+     "judged_active_pairs": 37,
+     "flagged_active_pairs": 7,
+     "share_active_judged": 1.0,
+     "system_coverage": 0.1891891891891892
+    },
+    {
+     "seed": 4,
+     "drops": 213,
+     "drops_observable": 176,
+     "drops_observable_O_eq_U": 176,
+     "drops_observable_O_ne_U": 176,
+     "frac_observable": 0.8262910798122066,
+     "frac_observable_O_eq_U": 0.8262910798122066,
+     "frac_observable_O_ne_U": 0.8262910798122066,
+     "malicious": [
+      2,
+      3,
+      6,
+      14,
+      15,
+      26,
+      35,
+      38,
+      43,
+      45,
+      46,
+      50,
+      58,
+      62,
+      70,
+      74,
+      87,
+      90,
+      96,
+      100
+     ],
+     "active_malicious": [
+      6,
+      26,
+      45
+     ],
+     "inactive_malicious": [
+      2,
+      3,
+      14,
+      15,
+      35,
+      38,
+      43,
+      46,
+      50,
+      58,
+      62,
+      70,
+      74,
+      87,
+      90,
+      96,
+      100
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [],
+      "detected": [
+       26,
+       45
+      ],
+      "missed": [
+       6
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 21,
+     "frac_honest_judged": 0.26582278481012656,
+     "tdr_pairs": 0.44,
+     "judged_active_pairs": 25,
+     "flagged_active_pairs": 11,
+     "share_active_judged": 1.0,
+     "system_coverage": 0.44
+    },
+    {
+     "seed": 5,
+     "drops": 389,
+     "drops_observable": 234,
+     "drops_observable_O_eq_U": 194,
+     "drops_observable_O_ne_U": 229,
+     "frac_observable": 0.6015424164524421,
+     "frac_observable_O_eq_U": 0.4987146529562982,
+     "frac_observable_O_ne_U": 0.5886889460154242,
+     "malicious": [
+      3,
+      8,
+      14,
+      22,
+      24,
+      50,
+      55,
+      64,
+      71,
+      72,
+      79,
+      81,
+      82,
+      83,
+      85,
+      91,
+      92,
+      93,
+      98,
+      99
+     ],
+     "active_malicious": [
+      14,
+      24,
+      50,
+      79,
+      83,
+      92,
+      99
+     ],
+     "inactive_malicious": [
+      3,
+      8,
+      22,
+      55,
+      64,
+      71,
+      72,
+      81,
+      82,
+      85,
+      91,
+      93,
+      98
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [
+       50
+      ],
+      "detected": [
+       83,
+       92
+      ],
+      "missed": [
+       14,
+       24,
+       79,
+       99
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 14,
+     "frac_honest_judged": 0.17721518987341772,
+     "tdr_pairs": 0.27906976744186046,
+     "judged_active_pairs": 43,
+     "flagged_active_pairs": 12,
+     "share_active_judged": 0.8571428571428571,
+     "system_coverage": 0.23920265780730895
+    },
+    {
+     "seed": 6,
+     "drops": 123,
+     "drops_observable": 51,
+     "drops_observable_O_eq_U": 36,
+     "drops_observable_O_ne_U": 51,
+     "frac_observable": 0.4146341463414634,
+     "frac_observable_O_eq_U": 0.2926829268292683,
+     "frac_observable_O_ne_U": 0.4146341463414634,
+     "malicious": [
+      8,
+      9,
+      15,
+      20,
+      25,
+      31,
+      32,
+      36,
+      38,
+      49,
+      54,
+      73,
+      74,
+      75,
+      79,
+      83,
+      84,
+      87,
+      88,
+      92
+     ],
+     "active_malicious": [
+      8,
+      74,
+      75,
+      84,
+      87
+     ],
+     "inactive_malicious": [
+      9,
+      15,
+      20,
+      25,
+      31,
+      32,
+      36,
+      38,
+      49,
+      54,
+      73,
+      79,
+      83,
+      88,
+      92
+     ],
+     "active_classification": {
+      "unobservable": [
+       74
+      ],
+      "insufficient": [
+       87
+      ],
+      "detected": [],
+      "missed": [
+       8,
+       75,
+       84
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 22,
+     "frac_honest_judged": 0.27848101265822783,
+     "tdr_pairs": 0.0,
+     "judged_active_pairs": 16,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.6,
+     "system_coverage": 0.0
+    },
+    {
+     "seed": 7,
+     "drops": 367,
+     "drops_observable": 224,
+     "drops_observable_O_eq_U": 130,
+     "drops_observable_O_ne_U": 221,
+     "frac_observable": 0.6103542234332425,
+     "frac_observable_O_eq_U": 0.3542234332425068,
+     "frac_observable_O_ne_U": 0.6021798365122616,
+     "malicious": [
+      2,
+      7,
+      10,
+      11,
+      17,
+      18,
+      23,
+      27,
+      31,
+      33,
+      42,
+      46,
+      60,
+      72,
+      79,
+      81,
+      88,
+      90,
+      94,
+      98
+     ],
+     "active_malicious": [
+      18,
+      46,
+      72,
+      81,
+      90
+     ],
+     "inactive_malicious": [
+      2,
+      7,
+      10,
+      11,
+      17,
+      23,
+      27,
+      31,
+      33,
+      42,
+      60,
+      79,
+      88,
+      94,
+      98
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [
+       90
+      ],
+      "detected": [
+       18
+      ],
+      "missed": [
+       46,
+       72,
+       81
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 13,
+     "frac_honest_judged": 0.16455696202531644,
+     "tdr_pairs": 0.15789473684210525,
+     "judged_active_pairs": 38,
+     "flagged_active_pairs": 6,
+     "share_active_judged": 0.8,
+     "system_coverage": 0.12631578947368421
+    },
+    {
+     "seed": 8,
+     "drops": 208,
+     "drops_observable": 118,
+     "drops_observable_O_eq_U": 84,
+     "drops_observable_O_ne_U": 117,
+     "frac_observable": 0.5673076923076923,
+     "frac_observable_O_eq_U": 0.40384615384615385,
+     "frac_observable_O_ne_U": 0.5625,
+     "malicious": [
+      3,
+      7,
+      8,
+      11,
+      18,
+      20,
+      23,
+      28,
+      41,
+      45,
+      50,
+      52,
+      58,
+      69,
+      72,
+      74,
+      76,
+      82,
+      88,
+      96
+     ],
+     "active_malicious": [
+      23,
+      50,
+      76,
+      82
+     ],
+     "inactive_malicious": [
+      3,
+      7,
+      8,
+      11,
+      18,
+      20,
+      28,
+      41,
+      45,
+      52,
+      58,
+      69,
+      72,
+      74,
+      88,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [],
+      "detected": [],
+      "missed": [
+       23,
+       50,
+       76,
+       82
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 15,
+     "frac_honest_judged": 0.189873417721519,
+     "tdr_pairs": 0.0,
+     "judged_active_pairs": 24,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 1.0,
+     "system_coverage": 0.0
+    },
+    {
+     "seed": 9,
+     "drops": 189,
+     "drops_observable": 135,
+     "drops_observable_O_eq_U": 116,
+     "drops_observable_O_ne_U": 135,
+     "frac_observable": 0.7142857142857143,
+     "frac_observable_O_eq_U": 0.6137566137566137,
+     "frac_observable_O_ne_U": 0.7142857142857143,
+     "malicious": [
+      8,
+      10,
+      13,
+      18,
+      23,
+      30,
+      37,
+      39,
+      43,
+      45,
+      48,
+      56,
+      57,
+      60,
+      66,
+      67,
+      77,
+      89,
+      91,
+      96
+     ],
+     "active_malicious": [
+      30,
+      37,
+      43,
+      56,
+      89,
+      91
+     ],
+     "inactive_malicious": [
+      8,
+      10,
+      13,
+      18,
+      23,
+      39,
+      45,
+      48,
+      57,
+      60,
+      66,
+      67,
+      77,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [
+       37,
+       43,
+       89
+      ],
+      "detected": [],
+      "missed": [
+       30,
+       56,
+       91
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 8,
+     "frac_honest_judged": 0.10126582278481013,
+     "tdr_pairs": 0.0,
+     "judged_active_pairs": 24,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.5,
+     "system_coverage": 0.0
+    },
+    {
+     "seed": 10,
+     "drops": 962,
+     "drops_observable": 620,
+     "drops_observable_O_eq_U": 520,
+     "drops_observable_O_ne_U": 614,
+     "frac_observable": 0.6444906444906445,
+     "frac_observable_O_eq_U": 0.5405405405405406,
+     "frac_observable_O_ne_U": 0.6382536382536382,
+     "malicious": [
+      4,
+      5,
+      10,
+      12,
+      17,
+      26,
+      28,
+      36,
+      38,
+      40,
+      48,
+      53,
+      68,
+      69,
+      72,
+      73,
+      76,
+      80,
+      88,
+      91
+     ],
+     "active_malicious": [
+      5,
+      26,
+      38,
+      68,
+      72,
+      76,
+      80,
+      88,
+      91
+     ],
+     "inactive_malicious": [
+      4,
+      10,
+      12,
+      17,
+      28,
+      36,
+      40,
+      48,
+      53,
+      69,
+      73
+     ],
+     "active_classification": {
+      "unobservable": [
+       68
+      ],
+      "insufficient": [
+       5
+      ],
+      "detected": [
+       38,
+       72,
+       76,
+       80,
+       88,
+       91
+      ],
+      "missed": [
+       26
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 13,
+     "frac_honest_judged": 0.16455696202531644,
+     "tdr_pairs": 0.7283950617283951,
+     "judged_active_pairs": 81,
+     "flagged_active_pairs": 59,
+     "share_active_judged": 0.7777777777777778,
+     "system_coverage": 0.5665294924554184
+    },
+    {
+     "seed": 11,
+     "drops": 185,
+     "drops_observable": 128,
+     "drops_observable_O_eq_U": 116,
+     "drops_observable_O_ne_U": 128,
+     "frac_observable": 0.6918918918918919,
+     "frac_observable_O_eq_U": 0.6270270270270271,
+     "frac_observable_O_ne_U": 0.6918918918918919,
+     "malicious": [
+      8,
+      10,
+      15,
+      25,
+      28,
+      31,
+      34,
+      39,
+      46,
+      54,
+      55,
+      60,
+      64,
+      72,
+      79,
+      80,
+      86,
+      94,
+      99,
+      100
+     ],
+     "active_malicious": [
+      39
+     ],
+     "inactive_malicious": [
+      8,
+      10,
+      15,
+      25,
+      28,
+      31,
+      34,
+      46,
+      54,
+      55,
+      60,
+      64,
+      72,
+      79,
+      80,
+      86,
+      94,
+      99,
+      100
+     ],
+     "active_classification": {
+      "unobservable": [],
+      "insufficient": [],
+      "detected": [
+       39
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 9,
+     "frac_honest_judged": 0.11392405063291139,
+     "tdr_pairs": 0.125,
+     "judged_active_pairs": 8,
+     "flagged_active_pairs": 1,
+     "share_active_judged": 1.0,
+     "system_coverage": 0.125
+    }
+   ],
+   "pooled": {
+    "drops": 3093,
+    "frac_observable": 0.639508567733592,
+    "frac_observable_O_eq_U": 0.5344325897187197,
+    "frac_observable_O_ne_U": 0.6333656644034917,
+    "active_malicious_seed_X": 46,
+    "inactive_malicious_seed_X": 154,
+    "active_classification_counts": {
+     "unobservable": 2,
+     "insufficient": 8,
+     "detected": 14,
+     "missed": 22
+    },
+    "honest_nodes": 790,
+    "honest_judged": 142,
+    "frac_honest_judged": 0.17974683544303796,
+    "tdr_pairs": 0.3431372549019608,
+    "share_active_judged": 0.782608695652174,
+    "system_coverage": 0.26854219948849106
+   }
+  },
+  "p100": {
+   "role": "observability ceiling (E2-10)",
+   "per_run": [
+    {
+     "seed": 2,
+     "drops": 110,
+     "drops_observable": 60,
+     "drops_observable_O_eq_U": 60,
+     "drops_observable_O_ne_U": 60,
+     "frac_observable": 0.5454545454545454,
+     "frac_observable_O_eq_U": 0.5454545454545454,
+     "frac_observable_O_ne_U": 0.5454545454545454,
+     "malicious": [
+      3,
+      8,
+      22,
+      23,
+      31,
+      39,
+      41,
+      48,
+      49,
+      53,
+      57,
+      59,
+      64,
+      74,
+      78,
+      80,
+      81,
+      91,
+      93,
+      96
+     ],
+     "active_malicious": [
+      23,
+      80
+     ],
+     "inactive_malicious": [
+      3,
+      8,
+      22,
+      31,
+      39,
+      41,
+      48,
+      49,
+      53,
+      57,
+      59,
+      64,
+      74,
+      78,
+      81,
+      91,
+      93,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [
+       23
+      ],
+      "insufficient": [],
+      "detected": [
+       80
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 17,
+     "frac_honest_judged": 0.21518987341772153,
+     "tdr_pairs": 0.9,
+     "judged_active_pairs": 10,
+     "flagged_active_pairs": 9,
+     "share_active_judged": 0.5,
+     "system_coverage": 0.45
+    },
+    {
+     "seed": 3,
+     "drops": 492,
+     "drops_observable": 0,
+     "drops_observable_O_eq_U": 0,
+     "drops_observable_O_ne_U": 0,
+     "frac_observable": 0.0,
+     "frac_observable_O_eq_U": 0.0,
+     "frac_observable_O_ne_U": 0.0,
+     "malicious": [
+      3,
+      4,
+      8,
+      9,
+      11,
+      19,
+      39,
+      46,
+      51,
+      53,
+      54,
+      55,
+      66,
+      68,
+      69,
+      75,
+      76,
+      91,
+      92,
+      95
+     ],
+     "active_malicious": [
+      11,
+      19,
+      54,
+      95
+     ],
+     "inactive_malicious": [
+      3,
+      4,
+      8,
+      9,
+      39,
+      46,
+      51,
+      53,
+      55,
+      66,
+      68,
+      69,
+      75,
+      76,
+      91,
+      92
+     ],
+     "active_classification": {
+      "unobservable": [
+       11,
+       19,
+       54,
+       95
+      ],
+      "insufficient": [],
+      "detected": [],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 10,
+     "frac_honest_judged": 0.12658227848101267,
+     "tdr_pairs": null,
+     "judged_active_pairs": 0,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.0,
+     "system_coverage": null
+    },
+    {
+     "seed": 4,
+     "drops": 289,
+     "drops_observable": 214,
+     "drops_observable_O_eq_U": 214,
+     "drops_observable_O_ne_U": 214,
+     "frac_observable": 0.740484429065744,
+     "frac_observable_O_eq_U": 0.740484429065744,
+     "frac_observable_O_ne_U": 0.740484429065744,
+     "malicious": [
+      2,
+      3,
+      6,
+      14,
+      15,
+      26,
+      35,
+      38,
+      43,
+      45,
+      46,
+      50,
+      58,
+      62,
+      70,
+      74,
+      87,
+      90,
+      96,
+      100
+     ],
+     "active_malicious": [
+      6,
+      26,
+      45
+     ],
+     "inactive_malicious": [
+      2,
+      3,
+      14,
+      15,
+      35,
+      38,
+      43,
+      46,
+      50,
+      58,
+      62,
+      70,
+      74,
+      87,
+      90,
+      96,
+      100
+     ],
+     "active_classification": {
+      "unobservable": [
+       6
+      ],
+      "insufficient": [],
+      "detected": [
+       26,
+       45
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 21,
+     "frac_honest_judged": 0.26582278481012656,
+     "tdr_pairs": 0.8947368421052632,
+     "judged_active_pairs": 19,
+     "flagged_active_pairs": 17,
+     "share_active_judged": 0.6666666666666666,
+     "system_coverage": 0.5964912280701754
+    },
+    {
+     "seed": 5,
+     "drops": 479,
+     "drops_observable": 95,
+     "drops_observable_O_eq_U": 75,
+     "drops_observable_O_ne_U": 95,
+     "frac_observable": 0.19832985386221294,
+     "frac_observable_O_eq_U": 0.15657620041753653,
+     "frac_observable_O_ne_U": 0.19832985386221294,
+     "malicious": [
+      3,
+      8,
+      14,
+      22,
+      24,
+      50,
+      55,
+      64,
+      71,
+      72,
+      79,
+      81,
+      82,
+      83,
+      85,
+      91,
+      92,
+      93,
+      98,
+      99
+     ],
+     "active_malicious": [
+      14,
+      24,
+      79,
+      83,
+      92,
+      99
+     ],
+     "inactive_malicious": [
+      3,
+      8,
+      22,
+      50,
+      55,
+      64,
+      71,
+      72,
+      81,
+      82,
+      85,
+      91,
+      93,
+      98
+     ],
+     "active_classification": {
+      "unobservable": [
+       14,
+       24,
+       83,
+       99
+      ],
+      "insufficient": [],
+      "detected": [
+       79,
+       92
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 13,
+     "frac_honest_judged": 0.16455696202531644,
+     "tdr_pairs": 0.2,
+     "judged_active_pairs": 15,
+     "flagged_active_pairs": 3,
+     "share_active_judged": 0.3333333333333333,
+     "system_coverage": 0.06666666666666667
+    },
+    {
+     "seed": 6,
+     "drops": 152,
+     "drops_observable": 15,
+     "drops_observable_O_eq_U": 15,
+     "drops_observable_O_ne_U": 15,
+     "frac_observable": 0.09868421052631579,
+     "frac_observable_O_eq_U": 0.09868421052631579,
+     "frac_observable_O_ne_U": 0.09868421052631579,
+     "malicious": [
+      8,
+      9,
+      15,
+      20,
+      25,
+      31,
+      32,
+      36,
+      38,
+      49,
+      54,
+      73,
+      74,
+      75,
+      79,
+      83,
+      84,
+      87,
+      88,
+      92
+     ],
+     "active_malicious": [
+      8,
+      75,
+      84,
+      87
+     ],
+     "inactive_malicious": [
+      9,
+      15,
+      20,
+      25,
+      31,
+      32,
+      36,
+      38,
+      49,
+      54,
+      73,
+      74,
+      79,
+      83,
+      88,
+      92
+     ],
+     "active_classification": {
+      "unobservable": [
+       8,
+       84,
+       87
+      ],
+      "insufficient": [],
+      "detected": [],
+      "missed": [
+       75
+      ]
+     },
+     "honest_nodes": 79,
+     "honest_judged": 21,
+     "frac_honest_judged": 0.26582278481012656,
+     "tdr_pairs": 0.0,
+     "judged_active_pairs": 5,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.25,
+     "system_coverage": 0.0
+    },
+    {
+     "seed": 7,
+     "drops": 490,
+     "drops_observable": 0,
+     "drops_observable_O_eq_U": 0,
+     "drops_observable_O_ne_U": 0,
+     "frac_observable": 0.0,
+     "frac_observable_O_eq_U": 0.0,
+     "frac_observable_O_ne_U": 0.0,
+     "malicious": [
+      2,
+      7,
+      10,
+      11,
+      17,
+      18,
+      23,
+      27,
+      31,
+      33,
+      42,
+      46,
+      60,
+      72,
+      79,
+      81,
+      88,
+      90,
+      94,
+      98
+     ],
+     "active_malicious": [
+      18,
+      46,
+      72,
+      81
+     ],
+     "inactive_malicious": [
+      2,
+      7,
+      10,
+      11,
+      17,
+      23,
+      27,
+      31,
+      33,
+      42,
+      60,
+      79,
+      88,
+      90,
+      94,
+      98
+     ],
+     "active_classification": {
+      "unobservable": [
+       18,
+       46,
+       72,
+       81
+      ],
+      "insufficient": [],
+      "detected": [],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 13,
+     "frac_honest_judged": 0.16455696202531644,
+     "tdr_pairs": null,
+     "judged_active_pairs": 0,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.0,
+     "system_coverage": null
+    },
+    {
+     "seed": 8,
+     "drops": 294,
+     "drops_observable": 94,
+     "drops_observable_O_eq_U": 94,
+     "drops_observable_O_ne_U": 94,
+     "frac_observable": 0.3197278911564626,
+     "frac_observable_O_eq_U": 0.3197278911564626,
+     "frac_observable_O_ne_U": 0.3197278911564626,
+     "malicious": [
+      3,
+      7,
+      8,
+      11,
+      18,
+      20,
+      23,
+      28,
+      41,
+      45,
+      50,
+      52,
+      58,
+      69,
+      72,
+      74,
+      76,
+      82,
+      88,
+      96
+     ],
+     "active_malicious": [
+      23,
+      50,
+      76,
+      82
+     ],
+     "inactive_malicious": [
+      3,
+      7,
+      8,
+      11,
+      18,
+      20,
+      28,
+      41,
+      45,
+      52,
+      58,
+      69,
+      72,
+      74,
+      88,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [
+       23,
+       76,
+       82
+      ],
+      "insufficient": [],
+      "detected": [
+       50
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 15,
+     "frac_honest_judged": 0.189873417721519,
+     "tdr_pairs": 0.8,
+     "judged_active_pairs": 5,
+     "flagged_active_pairs": 4,
+     "share_active_judged": 0.25,
+     "system_coverage": 0.2
+    },
+    {
+     "seed": 9,
+     "drops": 272,
+     "drops_observable": 94,
+     "drops_observable_O_eq_U": 91,
+     "drops_observable_O_ne_U": 94,
+     "frac_observable": 0.34558823529411764,
+     "frac_observable_O_eq_U": 0.33455882352941174,
+     "frac_observable_O_ne_U": 0.34558823529411764,
+     "malicious": [
+      8,
+      10,
+      13,
+      18,
+      23,
+      30,
+      37,
+      39,
+      43,
+      45,
+      48,
+      56,
+      57,
+      60,
+      66,
+      67,
+      77,
+      89,
+      91,
+      96
+     ],
+     "active_malicious": [
+      30,
+      37,
+      43,
+      56,
+      89,
+      91
+     ],
+     "inactive_malicious": [
+      8,
+      10,
+      13,
+      18,
+      23,
+      39,
+      45,
+      48,
+      57,
+      60,
+      66,
+      67,
+      77,
+      96
+     ],
+     "active_classification": {
+      "unobservable": [
+       37,
+       43,
+       56,
+       89,
+       91
+      ],
+      "insufficient": [],
+      "detected": [
+       30
+      ],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 8,
+     "frac_honest_judged": 0.10126582278481013,
+     "tdr_pairs": 0.1,
+     "judged_active_pairs": 10,
+     "flagged_active_pairs": 1,
+     "share_active_judged": 0.16666666666666666,
+     "system_coverage": 0.016666666666666666
+    },
+    {
+     "seed": 10,
+     "drops": 1222,
+     "drops_observable": 0,
+     "drops_observable_O_eq_U": 0,
+     "drops_observable_O_ne_U": 0,
+     "frac_observable": 0.0,
+     "frac_observable_O_eq_U": 0.0,
+     "frac_observable_O_ne_U": 0.0,
+     "malicious": [
+      4,
+      5,
+      10,
+      12,
+      17,
+      26,
+      28,
+      36,
+      38,
+      40,
+      48,
+      53,
+      68,
+      69,
+      72,
+      73,
+      76,
+      80,
+      88,
+      91
+     ],
+     "active_malicious": [
+      5,
+      26,
+      38,
+      72,
+      76,
+      80,
+      88,
+      91
+     ],
+     "inactive_malicious": [
+      4,
+      10,
+      12,
+      17,
+      28,
+      36,
+      40,
+      48,
+      53,
+      68,
+      69,
+      73
+     ],
+     "active_classification": {
+      "unobservable": [
+       5,
+       26,
+       38,
+       72,
+       76,
+       80,
+       88,
+       91
+      ],
+      "insufficient": [],
+      "detected": [],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 12,
+     "frac_honest_judged": 0.1518987341772152,
+     "tdr_pairs": null,
+     "judged_active_pairs": 0,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.0,
+     "system_coverage": null
+    },
+    {
+     "seed": 11,
+     "drops": 235,
+     "drops_observable": 0,
+     "drops_observable_O_eq_U": 0,
+     "drops_observable_O_ne_U": 0,
+     "frac_observable": 0.0,
+     "frac_observable_O_eq_U": 0.0,
+     "frac_observable_O_ne_U": 0.0,
+     "malicious": [
+      8,
+      10,
+      15,
+      25,
+      28,
+      31,
+      34,
+      39,
+      46,
+      54,
+      55,
+      60,
+      64,
+      72,
+      79,
+      80,
+      86,
+      94,
+      99,
+      100
+     ],
+     "active_malicious": [
+      39
+     ],
+     "inactive_malicious": [
+      8,
+      10,
+      15,
+      25,
+      28,
+      31,
+      34,
+      46,
+      54,
+      55,
+      60,
+      64,
+      72,
+      79,
+      80,
+      86,
+      94,
+      99,
+      100
+     ],
+     "active_classification": {
+      "unobservable": [
+       39
+      ],
+      "insufficient": [],
+      "detected": [],
+      "missed": []
+     },
+     "honest_nodes": 79,
+     "honest_judged": 9,
+     "frac_honest_judged": 0.11392405063291139,
+     "tdr_pairs": null,
+     "judged_active_pairs": 0,
+     "flagged_active_pairs": 0,
+     "share_active_judged": 0.0,
+     "system_coverage": null
+    }
+   ],
+   "pooled": {
+    "drops": 4035,
+    "frac_observable": 0.14175960346964064,
+    "frac_observable_O_eq_U": 0.13605947955390335,
+    "frac_observable_O_ne_U": 0.14175960346964064,
+    "active_malicious_seed_X": 42,
+    "inactive_malicious_seed_X": 158,
+    "active_classification_counts": {
+     "unobservable": 34,
+     "insufficient": 0,
+     "detected": 7,
+     "missed": 1
+    },
+    "honest_nodes": 790,
+    "honest_judged": 139,
+    "frac_honest_judged": 0.1759493670886076,
+    "tdr_pairs": 0.53125,
+    "share_active_judged": 0.19047619047619047,
+    "system_coverage": 0.10119047619047619
+   }
+  }
+ },
+ "malicious_sets": {
+  "2": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "3": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "4": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "5": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "6": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "7": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "8": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "9": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "10": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  },
+  "11": {
+   "num_malicious_p075": 20,
+   "num_malicious_p100": 20,
+   "same_malicious_set": true
+  }
+ },
+ "provenance": {
+  "frozen_md5": {
+   "analysis/stageE/E2_SPEC.md": "7f37d81dbc8cc4b823c2036e80190960",
+   "analysis/stageE/e1/e1_calibration_rev4.json": "0ca88a0e4c8fc56f63e6b44b496b65fd",
+   "analysis/stageE/e1/observer.py": "45d79f770c13f151bddee86b09bf96f6",
+   "analysis/stageE/e1/geom.py": "413d4f60b4efcdb125bf00c65d792e09",
+   "analysis/stageE/e1/truth.py": "203dbb7046bb1ad4323fdc222dfbacc8",
+   "analysis/stageE/e1/calibrate.py": "17b4b39af32b64cbb7eaaeb003216069",
+   "analysis/stageE/e1/calibrate_rev3.py": "03a6ff9cb9b4bcfbc4dd6423b78aaa48",
+   "analysis/stageE/e1/calibrate_rev4.py": "830a3733f378fb04a4680e43d0c60cf6"
+  },
+  "build_md5": {
+   "build/lib/libns3.41-aqua-sim-ng-default.so": "871c50fc90cc613513ce25211cc8e450",
+   "build/scratch/ns3.41-uwsn-trustq-attack-default": "54e444ed2ade8baf1c5fc3f54be5ad36"
+  },
+  "inputs_md5": {
+   "p075/run_2": {
+    "stderr.log": "ec89247f25f673345baf3cccd9e4f6e0",
+    "v1_2.tr": "fa0bd7dfef7bfe10fad9ac3254ec7acc",
+    "v1_2_meta.csv": "9452084aacdc464ef53cea5a601672c0",
+    "v1_2_mobility.csv": "500ec8d27be926a36fb934da4ca99fee",
+    "e1_opportunities.csv": "94aa6dd17f38f63f8f29bba1f801cc3c"
+   },
+   "p075/run_3": {
+    "stderr.log": "140724422d8a1180428563f6c408f8c6",
+    "v1_3.tr": "8f47293c38fcf3d2bc7953eda92288a3",
+    "v1_3_meta.csv": "15554a1333ead5c6e3ea6b876010e9d3",
+    "v1_3_mobility.csv": "1da652d59f77182dfb8f0d6c921164ea",
+    "e1_opportunities.csv": "d06461eb3a802be7b74b19ce14e83d38"
+   },
+   "p075/run_4": {
+    "stderr.log": "d8211964a270e606967a78829ec815e4",
+    "v1_4.tr": "1f009100a9a970fe37722ad4b0cc60cc",
+    "v1_4_meta.csv": "fc5eade33d6bfa25149b0cb34d9ffb0b",
+    "v1_4_mobility.csv": "80531f466ad92fd8333a31025114ad6e",
+    "e1_opportunities.csv": "c223a1a2177441eeb8ccbe42de519489"
+   },
+   "p075/run_5": {
+    "stderr.log": "183e07a4e90b5f76343d1b8bf0ae3049",
+    "v1_5.tr": "a150bf4402328857587050d47396b4fa",
+    "v1_5_meta.csv": "28da04ef5332902fc4bad01916009d1a",
+    "v1_5_mobility.csv": "b70b0e0fb11450d43af4a27587e3661c",
+    "e1_opportunities.csv": "667b81484503cda33603dfc1c12cc6f5"
+   },
+   "p075/run_6": {
+    "stderr.log": "b8c94cfcdffff21c74787b69d6a5723c",
+    "v1_6.tr": "6e911d8ae9166f29ca6835e1e5665aa0",
+    "v1_6_meta.csv": "5ec0351898dd0b3e7cb5733b787b9000",
+    "v1_6_mobility.csv": "d641571b2d4c49a531a2d94c3a300888",
+    "e1_opportunities.csv": "475d8cbeb1bd11268ba58601fec9796e"
+   },
+   "p075/run_7": {
+    "stderr.log": "fb7933d7a704463fbc302148c9a935e7",
+    "v1_7.tr": "03e39a1bf3bb8ff5826fc6e3cf0c5895",
+    "v1_7_meta.csv": "b4bc187b4010bd94cf164ef37e57a1fe",
+    "v1_7_mobility.csv": "8714fdd589f3b1dedd59b52d0cdbc515",
+    "e1_opportunities.csv": "b897d5b0acc507e335751a53d734b783"
+   },
+   "p075/run_8": {
+    "stderr.log": "51d084094870a8a2c7056e923e400747",
+    "v1_8.tr": "4084ad057296ea6f13b9e150fd9a0ccb",
+    "v1_8_meta.csv": "18b97cf76e998826840ce1d8cd862feb",
+    "v1_8_mobility.csv": "3d576bd773ed176126015b3861766fcc",
+    "e1_opportunities.csv": "46bcb76c88b8a3fffc978091253edcd6"
+   },
+   "p075/run_9": {
+    "stderr.log": "09caa5d374749f2c120f47ac8a521f06",
+    "v1_9.tr": "a76cdf69acc7f14a92749619ef9ace9a",
+    "v1_9_meta.csv": "498d3b4f7153cef33b8ca745e39f872f",
+    "v1_9_mobility.csv": "a4b307b20c606c553eb7c5d5540eba4f",
+    "e1_opportunities.csv": "df7154650716afd9ce682fa698707297"
+   },
+   "p075/run_10": {
+    "stderr.log": "b75fa19a260591089a4c256a92014d23",
+    "v1_10.tr": "09c946b0022e15280c6a994d03959ea1",
+    "v1_10_meta.csv": "10b1afc8415553a83ac44c002a478a0c",
+    "v1_10_mobility.csv": "367f637eac93289bb2ff2546c87996ce",
+    "e1_opportunities.csv": "5befd4bb4fbac92232de984f79698fb6"
+   },
+   "p075/run_11": {
+    "stderr.log": "5db3320f9e344f10944fbb7ff6bcc4da",
+    "v1_11.tr": "6fe6264907aa2ccffee4e6d645c0e444",
+    "v1_11_meta.csv": "272f630c98dfc64ef24bb8e7b3585689",
+    "v1_11_mobility.csv": "5156f36963c801ab694463e356778988",
+    "e1_opportunities.csv": "2db3f1d78e852d6703a4a613d5ca6d07"
+   },
+   "p100/run_2": {
+    "stderr.log": "f3285404cfc8dcee7205cfc131863c54",
+    "v1_2.tr": "c74d1da4c970d765be06f8edca7b1dba",
+    "v1_2_meta.csv": "d963e658a32c660d6015d8297b24404a",
+    "v1_2_mobility.csv": "500ec8d27be926a36fb934da4ca99fee",
+    "e1_opportunities.csv": "1d6735bf318d0096977fc0c0b3af088a"
+   },
+   "p100/run_3": {
+    "stderr.log": "1b1260ce33c30b448fbe2f1689f2aadc",
+    "v1_3.tr": "033122adddd52910467877c7a94b9268",
+    "v1_3_meta.csv": "a7cf8db913c4a2024e07129c7d19034f",
+    "v1_3_mobility.csv": "1da652d59f77182dfb8f0d6c921164ea",
+    "e1_opportunities.csv": "0c046797665ee2d873c12dc640ac27a8"
+   },
+   "p100/run_4": {
+    "stderr.log": "2e482e7fb9e5af5b472a16153d68fd3a",
+    "v1_4.tr": "d62ed3ea6e179360d23b42687f2a6d92",
+    "v1_4_meta.csv": "f520791184917fedec95b59630faa64c",
+    "v1_4_mobility.csv": "80531f466ad92fd8333a31025114ad6e",
+    "e1_opportunities.csv": "08420f93899715a9b5a5cd9ed716caaf"
+   },
+   "p100/run_5": {
+    "stderr.log": "3d7aabeccc358afd12a20294ca475714",
+    "v1_5.tr": "7611f0b66d8b2a170f578c388086e56c",
+    "v1_5_meta.csv": "8c1085f4c2b00fe3c74e3eb5e1c9e167",
+    "v1_5_mobility.csv": "b70b0e0fb11450d43af4a27587e3661c",
+    "e1_opportunities.csv": "f68bdd58ce3345450fd1e50cd45b7e40"
+   },
+   "p100/run_6": {
+    "stderr.log": "b05e2ec02ff4d80a321c18290ba90b5f",
+    "v1_6.tr": "821383717bc84e164370173d5273abe1",
+    "v1_6_meta.csv": "1c50a6e70fc7251547a72b4afc41d98d",
+    "v1_6_mobility.csv": "d641571b2d4c49a531a2d94c3a300888",
+    "e1_opportunities.csv": "e1504989321c5571d8096c750e8db85e"
+   },
+   "p100/run_7": {
+    "stderr.log": "2723d326fcafea46ab4c2f5c6ac8f3f1",
+    "v1_7.tr": "cc4de924262dae54592c63d555f7fcc8",
+    "v1_7_meta.csv": "ec2eb54b6758aa90bf0f2bab678892bb",
+    "v1_7_mobility.csv": "8714fdd589f3b1dedd59b52d0cdbc515",
+    "e1_opportunities.csv": "2c717fa1147a6b5dd7bf862f14cbd89c"
+   },
+   "p100/run_8": {
+    "stderr.log": "e4a2d9ccfb445555a62652778097f298",
+    "v1_8.tr": "36a4452a366aaa23a40531a9d7697bc0",
+    "v1_8_meta.csv": "d90e846d23eda285c11322f11d19c1d7",
+    "v1_8_mobility.csv": "3d576bd773ed176126015b3861766fcc",
+    "e1_opportunities.csv": "91edd27d5b486ed9f3a1a7e2277477cd"
+   },
+   "p100/run_9": {
+    "stderr.log": "1c664cfa3a36aeb1baa750e38f84dde7",
+    "v1_9.tr": "1b7debacda1acf73a5ccca425a6b976c",
+    "v1_9_meta.csv": "d67f43b7dc42dba6a8b9cd733982509e",
+    "v1_9_mobility.csv": "a4b307b20c606c553eb7c5d5540eba4f",
+    "e1_opportunities.csv": "7d084924694d137838589b99f19624ba"
+   },
+   "p100/run_10": {
+    "stderr.log": "cae62baae5b2b9055e36e66f74fa4fdf",
+    "v1_10.tr": "0b14947ffc21abdcf21d4f1275306bc2",
+    "v1_10_meta.csv": "863895dcbb5d54d524786ca06afcea32",
+    "v1_10_mobility.csv": "367f637eac93289bb2ff2546c87996ce",
+    "e1_opportunities.csv": "4c1cd6aa130e69f8a4d6210b4c1d9c84"
+   },
+   "p100/run_11": {
+    "stderr.log": "895576f41448a5fa3675a981fffb1140",
+    "v1_11.tr": "bd81851f3dbf6137d9630e6a2c1e8e3b",
+    "v1_11_meta.csv": "79609c87eb320f7c3798fa68f335fc36",
+    "v1_11_mobility.csv": "5156f36963c801ab694463e356778988",
+    "e1_opportunities.csv": "d1157ab4ed919b0f0b23a18b1fc7e822"
+   }
+  },
+  "evaluator_md5": "e65000be640e4153809ed31a4d5cd647",
+  "parent_commit": "36655b739d1350db65c92445b6000c06a5abe87b",
+  "submodule_commit": "41c67c39e3acd3153bcb16558c11a7b58001b033",
+  "python": "3.10.12",
+  "numpy": "1.23.5"
+ }
+}

@@ -401,3 +401,56 @@ Diagnostic only; not a performance result.
 - The frozen D4-5 stop rule applies: stop and open the separately scoped Option C discussion; no further redesign aimed at reaching 0.80 power.
 - Development/recalibration validation only; independent false-alarm assessment remains G2b on sealed seeds 2–11.
 - No attacker seeds were used.
+
+### E-35 — Stage E E2: held-out Arm-A test (seeds 2–11) under the frozen E2 specification
+- **Specification:** `analysis/stageE/E2_SPEC.md` (commit `a87ffbc`, D-20; md5 `7f37d81dbc8cc4b823c2036e80190960`), within C-d (`362cda7`, D-19) and revision 4 (`8a0ff2f`). Arm A only. Seeds 2–11; p = 0.75 runs feed G2/G2b, p = 1.0 runs feed only the ceiling table. No recalibration: frozen revision-4 calibration `e1_calibration_rev4.json` (md5 `0ca88a0e4c8fc56f63e6b44b496b65fd`).
+- **Frozen code and build:**
+  - Evaluator `analysis/stageE/e2/e2_evaluate.py` (md5 `e65000be640e4153809ed31a4d5cd647`) and tests `test_e2_evaluate.py` (md5 `4da0069fa158f1f3e74c58be62ac1f11`; 47 checks on synthetic data and development seed 1 only), committed at `36655b7` before any E2 data existed.
+  - Unchanged helpers: `observer.py` `45d79f77…`, `geom.py` `413d4f60…`, `truth.py` `203dbb70…`, `calibrate.py` `17b4b39a…`, `calibrate_rev3.py` `03a6ff9c…`, `calibrate_rev4.py` `830a3733…`; `rxhdr_validation/cmp_masked.py` `4e50185b…`; `analysis/runargs.sh` `aee01473…`.
+  - Library `871c50fc…`, scenario binary `54e444ed…`, submodule `41c67c3`. Python 3.10.12, NumPy 1.23.5.
+- **Preflight decisions (approved 2026-10-05):**
+  - P1: 216 tracked repository-root files (commit `2719461`, 2026-09-07) and 50 files in `~/ns-allinone-3.41/ns-3.41-old` (2026-09-06) carry run indices 2–11. They are pre-Stage-E, pre-rebaseline outputs (seeds 2–11 were the earlier observer held-out and flow-detector v1 set, `PROJECT_HANDOFF.md` §4, §6). They were left untouched and unread and are not E2 inputs. Seeds 2–11 were unopened within Stage E, not over the whole project history.
+  - P2: the frozen commands do not pass the flag; **adversarialMotion = false (default; flag not passed)**.
+  - P3: a failed reproducibility check is a hard stop.
+- **Phase 1, simulations (20 runs, outputs outside the repo, `~/uwsn-runs/stageE/E2/{p075,p100}/run_N`, 1.3 GB):**
+  - Commands, N = 2–11: `analysis/runargs.sh ~/uwsn-runs/stageE/E2/p075/run_N --run=N --routing=trustq --priorityScale=0 --attackerFraction=0.2 --dropProbability=0.75` and the same into `p100/run_N` with `--dropProbability=1.0`. No other flag.
+  - **Checker incident:** 8 runs (`p075/run_2`–`run_9`, started 21:23:57) completed with wrapper `exit=0`, but the local scratch run-check script rejected them because it required `stdout.log` to be non-empty. The scenario writes nothing to stdout (0 bytes in every E1 and development run); the approved checklist requires only that the file exists. The first failure stopped the batch; the other 12 runs were not launched.
+  - **Recovery (option a, approved):** only the local checker was corrected (`stdout.log` must exist; every other output must exist and be non-empty; the `_meta.csv` check unchanged). The 8 completed runs were fingerprinted (64 files), verified with the corrected checks **without rerunning**, and found byte-identical to the fingerprint afterwards. The remaining 12 runs (`p075/run_10`, `run_11`, `p100/run_2`–`run_11`) ran 21:28:47–21:29:07. **No simulation was rerun to hide or replace an output.**
+  - All 20 runs: wrapper `exit=0`; all 8 required files present; `_meta.csv` matches every E2-2 setting (plus hop_by_hop 1, width 400). 20 malicious nodes in every run; p075 and p100 malicious sets identical for all 10 seeds. Manifest: 160 files, md5 `1616648ba5211a947bb834f31d51aaec`.
+- **Phase 2, O1:** the unchanged `observer.py` ran once per run directory (21:32:34–21:32:44, `PYTHONDONTWRITEBYTECODE=1`); 20/20 exit 0; 20 `e1_opportunities.csv` files; raw simulation files unchanged. Opportunities: p075 165,043 (MATCH 73,565, SILENT 64,029, OTHER-UP 27,449); p100 141,870 (MATCH 71,843, SILENT 45,446, OTHER-UP 24,581).
+- **Phase 3, reproducibility (E2-12): PASS.**
+  - All 20 frozen commands re-simulated into `~/uwsn-runs/stageE/E2_repeat/` (21:35:40–21:36:08), then the unchanged observer (21:36:20–21:36:27).
+  - Energy, mobility, trust, observed and meta CSVs, `stdout.log`, `stderr.log` and `e1_opportunities.csv`: **160/160 byte-identical**.
+  - Traces: **20/20 with 0 records differing after masking `token`, `ts` and `range`** (`cmp_masked.py`). Before masking, `range` differs in every record and `token`/`ts` in 0–76 records per run: the uninitialised VBHeader fields of D-16.
+  - Original `E2/` (180 files, manifest md5 `f32617b3b56f590d35039ac558758ca2`) unchanged; `E2_repeat/` 180 files, manifest md5 `713e3ca240997063735f23a6fd6dbc9a`.
+- **Phase 4, evaluation:**
+  - Evaluation 1 (21:56:14–21:56:57), committed evaluator, inputs `~/uwsn-runs/stageE/E2/p075` and `~/uwsn-runs/stageE/E2/p100`: `analysis/stageE/e2/e2_results.json` md5 **`efd14b3b9f9398318deccaf9f969ac97`**, `analysis/stageE/e2/e2_report.txt` md5 **`75ef38a6852dcdd7825289579ce81c57`**.
+  - Evaluation 2 (21:57:12–21:57:52), same evaluator and inputs, separate output location: **identical apart from `created_utc`** (canonical JSON without `created_utc`, md5 `1d7c88ceac56f63a8a37858c7e927d33` for both). **PASS.**
+- **Population (p = 0.75):** judged honest pairs |H| = 1,383; judged active-malicious pairs |D| = 306; 36 distinct (seed, X) in D; no judged pair above n_max = 554. Bootstrap: B = 10,000, NumPy PCG64(12345), seeds then X nodes with occurrence-specific draws; zero-denominator replicates 0 (FA, TDR, AUC).
+- **Gates:**
+
+  | Gate | Value | Criterion | Result |
+  |---|---|---|---|
+  | G2 | 306 judged active-malicious pairs; 36 distinct (seed, X) | ≥ 43 and ≥ 10 | **PASS** |
+  | G2b item 1, FA | point 73/1,383 = 0.0528; 5th percentile 0.0304 | ≤ 0.05 | **PASS** |
+  | G2b item 2, AUC | point 0.9055; 2.5th percentile 0.8464 | ≥ 0.70 and > 0.5 | **PASS** |
+  | G2b item 3, TDR vs FA | TDR point 105/306 = 0.3431; TDR 2.5th percentile 0.0846; FA 97.5th percentile 0.0873 | TDR 2.5th > FA 97.5th (strict) | **FAIL** (by 0.0027) |
+  | **G2b** | | all three | **FAIL** (fully interpretable: G2 passed) |
+
+- **Ceiling tables (E2-10, descriptive; no gate):**
+
+  | Pooled over seeds 2–11 | p = 1.0 (ceiling) | p = 0.75 (alongside) |
+  |---|---|---|
+  | Ground-truth drops | 4,035 | 3,093 |
+  | Observable (any / O = U / O ≠ U) | 0.142 / 0.136 / 0.142 | 0.640 / 0.534 / 0.633 |
+  | Active-malicious (seed, X) | 42 | 46 |
+  | Unobservable / insufficient / detected / missed | 34 / 0 / 7 / 1 | 2 / 8 / 14 / 22 |
+  | Inactive-malicious (seed, X) | 158 | 154 |
+  | Honest nodes judged | 139/790 | 142/790 |
+  | TDR (pairs); share of active nodes judged; system coverage | 0.531; 0.190; 0.101 | 0.343; 0.783; 0.269 |
+
+  - At p = 1.0, seeds 3, 7, 10 and 11 have no observable drop and every active-malicious node is unobservable.
+  - At p = 0.75, per-seed pair TDR ranges from 0 (seeds 6, 8, 9) to 0.900 (seed 2, 9/10); seed 10 contributes 59/81.
+- **Status (E2-14, applied exactly):** **G2b FAIL.** Frozen conclusion: "Oracle-free overhearing evidence does not separate droppers from honest nodes at the declared false-alarm rate." **The roadmap stops; the Option C discussion follows; E3, E4 and E5 do not run.**
+- **This result is final under the frozen E2 specification.** The two-sided reading of the TDR lower bound and the FA upper bound in item 3 was a proposed interpretation [P], frozen in `E2_SPEC.md` (`a87ffbc`) before any E2 data existed. The E2 result is not retroactively altered by any alternative statistical interpretation (one-sided intervals, other percentile conventions, other bootstrap parameters, recalibrated thresholds or changed populations). No alternative interpretation was computed.
+- **Not executed:** E3, E4 and E5; no Arm B or Arm C computation; seeds 22–31 and 41–50 untouched.

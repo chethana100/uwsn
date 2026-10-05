@@ -1,0 +1,19 @@
+Stage E E2 - E2 held-out Arm-A evaluation
+Specification: analysis/stageE/E2_SPEC.md (frozen at commit a87ffbc; D-20); seeds [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; created 2026-10-05T16:26:56Z
+
+Population (p = 0.75): judged honest pairs |H| = 1383; judged active-malicious pairs |D| = 306; distinct (seed, X) in D = 36; judged pairs above n_max 554: 0
+Point: FA 73/1383 = 0.0528; TDR 105/306 = 0.3431; AUC 0.9055
+Bootstrap (B = 10000, PCG64 12345; seeds, then X nodes within each seed occurrence; O not resampled): FA 5th 0.0304, FA 97.5th 0.0873, TDR 2.5th 0.0846, AUC 2.5th 0.8464; zero-denominator replicates {'fa': 0, 'tdr': 0, 'auc': 0}
+
+G2: |D| 306 >= 43 and distinct (seed, X) 36 >= 10: PASS
+G2b item 1 (FA 5th percentile <= 0.05): True
+G2b item 2 (AUC >= 0.7 and AUC 2.5th percentile > 0.5): True
+G2b item 3 (TDR 2.5th percentile > FA 97.5th percentile): False
+G2b: False
+Outcome (E2-14): G2b FAIL: the roadmap stops; Option C discussion follows (E3-E5 do not run)
+   frozen conclusion: "Oracle-free overhearing evidence does not separate droppers from honest nodes at the declared false-alarm rate."
+
+Ceiling table p100 (observability ceiling (E2-10)): drops 4035, observable 0.1418 (O=U 0.1361, O!=U 0.1418); active-malicious (seed, X) 42 {'unobservable': 34, 'insufficient': 0, 'detected': 7, 'missed': 1}; inactive 158; honest judged 139/790; system coverage 0.1012
+Ceiling table p075 (descriptive, alongside the ceiling (E2-10)): drops 3093, observable 0.6395 (O=U 0.5344, O!=U 0.6334); active-malicious (seed, X) 46 {'unobservable': 2, 'insufficient': 8, 'detected': 14, 'missed': 22}; inactive 154; honest judged 142/790; system coverage 0.2685
+
+E3 does not start automatically after E2; it requires explicit approval after review (E2-14).
