@@ -377,7 +377,11 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
   - The framework, arm labels, S1/S2 and seed allocation are approved (D-13 to D-16).
   - The `[RXHDR]` logging is done and validated (E-31).
   - E1 run under revision 2 failed G1 (E-32, commit `58cc50c`; its files are kept unchanged as the historical record).
-  - Revision 3 (README) redesigns the V6 calibration and the V3 rule. It is approved but not yet implemented; E1 re-evaluation under revision 3 is pending.
+  - Revision 3 (README) redesigned the V6 calibration and the V3 rule. E1 re-evaluated under revision 3 failed G1 (E-33, commit `b016a9a`): V6-A false-alarm transfer passed, V6-B power feasibility failed (n_min undefined in 5/10 folds). Its files are kept unchanged as the historical record.
+  - **Revision 4 is frozen at commit `8a0ff2f`** (D-18): rate-scale statistic r_w, isotonic per-bin thresholds, exact Arm-A power with a bootstrap lower bound, P-suffix n_min calibrated on Arm A only and applied to Arms B/C through n_eff (Option A; no power claim for B/C). P5 is still open for B/C binning/judging details.
+  - **Revision 4 is not yet implemented, and E1 has not been rerun or re-evaluated under it. No revision-4 validation result exists; G1 has not passed under any revision.** The next implementation must follow the frozen revision-4 README exactly, as new files that leave the revision-2 and revision-3 records untouched.
+  - Attacker seeds stay sealed until G1 passes: no run on seeds 2–11 (or 22–31, 41–50) before then.
+  - Code state for Stage E: aqua-sim-ng submodule at `41c67c3` (`[RXHDR]` logging only), clean; no other C++ change is permitted during E1–E5 (S2).
   - Frozen specification: `analysis/stageE/README.md` (O1/O2, strata, calibration procedure, bars, gates G1–G6, Eb/N0 grid, attacker configuration, open points, revision log).
 - Not yet run:
   - Online replay (`eaqte_online.py`, missing from this workspace)
