@@ -391,3 +391,13 @@ Diagnostic only; not a performance result.
   - **V6 overall: FAIL. G1 (revision 3): FAIL.**
   - The V6-A / V6-B split is the reporting classification decided on 2026-10-05. The revision-3 report files print a single "V6 FAIL".
 - **Status:** G1 fails. Revision 3 is not changed. E2–E5 not started; seeds 2–11 untouched.
+
+### E-34 — Revision-4 E1 re-evaluation (Arm A, clean calibration seeds 12–21)
+- Revision 4 was implemented and evaluated using the frozen specification.
+- Frozen calibration JSON md5 0ca88a0e4c8fc56f63e6b44b496b65fd.
+- **V6-A PASS:** pooled out-of-seed FA 110/2,057 = 0.0535 (point estimate above nominal 0.05), not significantly above 0.05 under the frozen one-sided 95% cluster-bootstrap criterion (10,000 replicates; PCG64 seed 12345; lower bound 0.0297).
+- **V6-B FAIL:** n_min is undefined in the full calibration and in all 10 folds because no bin has lower confidence bound ≥ 0.80 (full-calibration maximum 0.668; fold maxima 0.538–0.719).
+- Therefore G1 FAILS under Revision 4.
+- The frozen D4-5 stop rule applies: stop and open the separately scoped Option C discussion; no further redesign aimed at reaching 0.80 power.
+- Development/recalibration validation only; independent false-alarm assessment remains G2b on sealed seeds 2–11.
+- No attacker seeds were used.

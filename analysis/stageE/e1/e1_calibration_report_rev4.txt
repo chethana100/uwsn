@@ -1,0 +1,40 @@
+Stage E E1 calibration — REVISION 4 (frozen spec ../README.md §7, commit 8a0ff2f), Arm A only
+Re-evaluation of the existing E1 outputs (clean seeds 12,13,14,15,16,17,18,19,20,21); no simulation rerun, no attacker data.
+MATCH+SILENT opportunities: 174700; SILENT 66033
+Steps 1-2 (unchanged): q_bar 0.377979; n_ref 14; reference pairs 2044 of 2668
+Step 3 (rate scale r = (K - E)/n; nearest-rank rho_b; PAVA non-increasing tau_A,b) and step 4 (exact Arm-A power;
+bootstrap LCB = 50th smallest of B_cal = 1000, PCG64 seed 12345):
+   bin  interval        N   n max     rho_b      tau_A,b   FA@rho  FA@tau   power_b   LCB_b    var(r)
+     1  [14,23)        226     22    0.61508    0.66678  0.0487  0.0265   0.0635   0.0428   0.1086
+     2  [23,34)        206     33    0.72350    0.66678  0.0485  0.0874   0.0958   0.0700   0.1234
+     3  [34,46)        203     45    0.49404    0.49698  0.0493  0.0443   0.3732   0.1799   0.0900
+     4  [46,61)        205     60    0.49989    0.49698  0.0488  0.0537   0.3875   0.2788   0.0795
+     5  [61,76)        205     75    0.41457    0.43575  0.0488  0.0390   0.6271   0.3332   0.0763
+     6  [76,89)        212     88    0.34586    0.43575  0.0472  0.0142   0.6491   0.3057   0.0492
+     7  [89,95)        310     94    0.48056    0.43575  0.0484  0.0548   0.7158   0.3369   0.0633
+     8  [95,139)       200    138    0.48330    0.43575  0.0500  0.0650   0.6652   0.4643   0.0722
+     9  [139,inf)      277    554    0.42392    0.42392  0.0469  0.0469   0.7302   0.6677   0.0404
+   n_max (verified power range limit) = 554
+   P-suffix n_min = UNDEFINED -> G1 FAILS (option i; no adjustment)
+   in-sample FA among pairs with n >= n_min: 0/0 (n_min undefined)
+   Z over-dispersion (descriptive only): var(Z) 28.98
+   The power guarantee, when n_min is defined, is an Arm-A claim only; no calibrated power is claimed for Arms B/C.
+   Revision-3 figures ~0.41 / ~0.60 are revision-3 diagnostics only, not a ceiling for this statistic.
+
+V6 leave-one-seed-out — RECALIBRATION / DEVELOPMENT VALIDATION (independent FA assessment = G2b on sealed seeds 2-11)
+   seed 12: n_ref 14, bins 9, n_min UNDEFINED; V6-A pairs 125, flagged 4, FA 0.0320; fold LCB [0.020, 0.063, 0.077, 0.212, 0.224, 0.179, 0.189, 0.311, 0.671]
+   seed 13: n_ref 13, bins 8, n_min UNDEFINED; V6-A pairs 193, flagged 3, FA 0.0155; fold LCB [0.029, 0.062, 0.074, 0.197, 0.219, 0.160, 0.287, 0.673]
+   seed 14: n_ref 15, bins 8, n_min UNDEFINED; V6-A pairs 263, flagged 28, FA 0.1065; fold LCB [0.063, 0.067, 0.237, 0.226, 0.239, 0.256, 0.360, 0.621]
+   seed 15: n_ref 14, bins 8, n_min UNDEFINED; V6-A pairs 245, flagged 15, FA 0.0612; fold LCB [0.030, 0.063, 0.167, 0.205, 0.212, 0.191, 0.335, 0.679]
+   seed 16: n_ref 14, bins 8, n_min UNDEFINED; V6-A pairs 249, flagged 19, FA 0.0763; fold LCB [0.030, 0.059, 0.091, 0.250, 0.393, 0.520, 0.590, 0.719]
+   seed 17: n_ref 14, bins 8, n_min UNDEFINED; V6-A pairs 211, flagged 11, FA 0.0521; fold LCB [0.026, 0.057, 0.070, 0.178, 0.208, 0.150, 0.304, 0.657]
+   seed 18: n_ref 13, bins 9, n_min UNDEFINED; V6-A pairs 234, flagged 2, FA 0.0085; fold LCB [0.051, 0.026, 0.061, 0.089, 0.153, 0.122, 0.127, 0.222, 0.637]
+   seed 19: n_ref 14, bins 9, n_min UNDEFINED; V6-A pairs 156, flagged 10, FA 0.0641; fold LCB [0.018, 0.059, 0.136, 0.216, 0.273, 0.225, 0.239, 0.386, 0.622]
+   seed 20: n_ref 13, bins 9, n_min UNDEFINED; V6-A pairs 162, flagged 2, FA 0.0123; fold LCB [0.032, 0.063, 0.097, 0.209, 0.203, 0.168, 0.187, 0.287, 0.655]
+   seed 21: n_ref 14, bins 7, n_min UNDEFINED; V6-A pairs 219, flagged 16, FA 0.0731; fold LCB [0.019, 0.062, 0.152, 0.224, 0.277, 0.247, 0.538]
+   V6-A false-alarm transfer (all 10 folds, held-out pairs n >= fold n_ref): pooled FA 110/2057 = 0.0535; one-sided 95% lower bound (cluster bootstrap seeds -> nodes, B = 10000, PCG64 seed 12345) = 0.0297: PASS
+      held-out pairs above their fold's n_max (judged, outside the verified power range): 6
+   V6-B power feasibility (n_min defined in every fold and in the full calibration): FAIL
+   V6 = V6-A and V6-B: FAIL
+
+Frozen revision-4 calibration: analysis/stageE/e1/e1_calibration_rev4.json  md5 0ca88a0e4c8fc56f63e6b44b496b65fd

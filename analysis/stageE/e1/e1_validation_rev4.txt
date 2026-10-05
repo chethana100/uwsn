@@ -1,0 +1,24 @@
+Stage E E1 — REVISION 4 G1 summary (frozen spec ../README.md §12, commit 8a0ff2f)
+Re-evaluation of the existing E1 outputs; no simulation rerun; no attacker data.
+
+Historical revision-2/3 files unchanged (md5): True ; opportunity inputs identical to E-32: True
+Carried (unchanged by revision 4): {'V1': 'PASS', 'V2': 'PASS', 'V4': 'PASS', 'V7': 'PASS', 'V8': 'PASS', 'V3-a': 'PASS'}
+
+V5 static audit (forbidden ground-truth tokens in code, docstrings excluded; imports):
+   observer.py: clean; tokens none; imports ['geom', 'sys, re, csv, math, bisect, collections as C']
+   geom.py: clean; tokens none; imports ['math']
+   calibrate.py: clean; tokens none; imports ['numpy as np', 'sys, os, csv, json, math, hashlib, subprocess, datetime, collections as C']
+   calibrate_rev3.py: clean; tokens none; imports ['calibrate', 'numpy as np', 'sys, os, json, math, bisect, hashlib, subprocess, datetime, collections as C']
+   calibrate_rev4.py: clean; tokens none; imports ['calibrate', 'calibrate_rev3', 'numpy as np', 'sys, os, json, math, hashlib, subprocess, datetime, collections as C']
+   observe() boundary intact: True; observer.py/geom.py unchanged: True/True; modules importing this validator: none
+V5: PASS
+
+V6 (development/recalibration validation; independent FA assessment = G2b on sealed seeds 2-11):
+   V6-A false-alarm transfer: pooled FA 110/2057 = 0.0535, one-sided lower bound 0.0297: PASS
+   V6-B power feasibility: full-calibration n_min None; folds with undefined n_min [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]: FAIL
+   V6: FAIL
+
+G1 summary: V1 PASS, V2 PASS, V3-a PASS, V4 PASS, V5 PASS, V6-A PASS, V6-B FAIL, V7 PASS, V8 PASS
+G1 (revision 4): FAIL
+D4-5 stop rule applies: revision 4 failed V6-B -> stop and open the separately scoped Option C discussion; no further redesign aimed only at 0.80 power.
+Power claims, if any, are Arm-A only; no calibrated power claim for Arms B/C. Seeds 2-11 remain sealed unless G1 passes.
