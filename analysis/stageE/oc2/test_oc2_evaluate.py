@@ -51,9 +51,9 @@ check("constants: E-1 f 25 kHz, m 640; E-6a dt 0.05; E-8 norm 1e-6; P-1 40 dB, k
 check("S-12 fixed bins: SS/CCQ 10 bins of 0.1 on [0, 1]; EE 20 bins of 0.05",
       len(E.SS_CCQ_EDGES) == 11 and len(E.EE_EDGES) == 21 and E.SS_CCQ_EDGES[0] == 0.0 and E.SS_CCQ_EDGES[-1] == 1.0
       and E.EE_EDGES[-1] == 1.0)
-check("frozen OC2_SPEC.md md5 c0d9344e... is the one the evaluator requires",
+check("frozen OC2_SPEC.md revision-2 md5 f0b83d29... (D-24) is the one the evaluator requires",
       E.md5(os.path.join(E.REPO, "analysis/stageE/OC2_SPEC.md")) == E.FROZEN_MD5["analysis/stageE/OC2_SPEC.md"]
-      == "c0d9344e10dbc7d42b2553ad1b2c0a5d")
+      == "f0b83d29395972982e7ce34c389b77d7")
 check("S-7 draw rule is e2_evaluate.draw_replicate itself (E2-8)", E.draw_replicate is E2.draw_replicate)
 
 # 2. E-1 p(d) ---------------------------------------------------------------------------------------------------------
@@ -286,9 +286,9 @@ Ub = {12: list(range(2, 9)), 13: list(range(2, 9))}
 Mb2, idb = E.bootstrap_multiplicities([12, 13], Ub, B=64)
 nodeb = np.array([idb[(int(s), int(xx))] for s, xx in zip(sb, xb)])
 obs = E.observed_relationship(stb, eb, yb, 3)
-orr_b = E.bootstrap_or(stb, eb < E.XI, yb, nodeb, Mb2, Mb2.shape[1], 3)
-beta1 = E.bootstrap_beta(stb, eb, yb, nodeb, Mb2, workers=1)
-beta4 = E.bootstrap_beta(stb, eb, yb, nodeb, Mb2, workers=4)
+orr_b, _ = E.bootstrap_or(stb, eb < E.XI, yb, nodeb, Mb2, Mb2.shape[1], 3)
+beta1, _ = E.bootstrap_beta(stb, eb, yb, nodeb, Mb2, workers=1)
+beta4, _ = E.bootstrap_beta(stb, eb, yb, nodeb, Mb2, workers=4)
 check("bootstrap results do not depend on the number of worker processes (bit-identical)", np.array_equal(beta1, beta4))
 okx = True
 for b in (0, 7, 33):
@@ -301,21 +301,69 @@ xs = np.sort(beta1); hh = (len(xs) - 1) * 0.025
 check("S-7 interval: linear percentiles 2.5 / 97.5 over all replicates",
       abs(lo - (xs[int(hh)] + (hh - int(hh)) * (xs[int(hh) + 1] - xs[int(hh)]))) < 1e-15 and lo <= hi)
 
-# S-13b: a fragile but identifiable dataset: node (12, 2) carries every MATCH of stratum 0
+# D-24 (OC2_SPEC revision 2): single-outcome strata in bootstrap replicates ------------------------------------------
+# (a) a fragile but identifiable dataset: node (12, 2) carries every MATCH of stratum 0
 yf = yb.copy()
 yf[(stb == 0) & ~((sb == 12) & (xb == 2))] = True
-obs_f = E.observed_relationship(stb, eb, yf, 3)                 # observed data identifiable
-Mdeg = np.ones_like(Mb2[:2])
-Mdeg[0, idb[(12, 2)]] = 0                                        # replicate 1 omits that node -> stratum 0 only SILENT
-msg_b = raises(E.ReplicateFailure, E.bootstrap_beta, stb, eb, yf, nodeb, Mdeg, 1)
-Mden = np.ones_like(Mb2[:2])
-Mden[0, :] = 0                                                   # replicate 1 with no positive weight -> OR_MH undefined
-deg_or = raises(E.ReplicateFailure, E.bootstrap_or, stb, eb < E.XI, yb, nodeb, Mden, Mden.shape[1], 3)
-check("S-13b: identifiable observed data with a degenerate replicate -> observed estimates returned, ReplicateFailure "
-      "'not evaluable', no interval", obs_f["OR_MH"] > 0 and math.isfinite(obs_f["beta"]) and msg_b is not None and "not evaluable" in msg_b
-      and deg_or is not None and "not evaluable" in deg_or)
-check("S-13b: no substitution, discard or redraw (the failure names replicate 1 and stops)",
-      "replicate 1:" in msg_b and "replicate 1:" in deg_or)
+obs_f = E.observed_relationship(stb, eb, yf, 3)                 # observed data identifiable (all strata informative)
+Momit = np.ones_like(Mb2[:3]); Momit[1] = Mb2[5]; Momit[2] = Mb2[9]
+Momit[0, idb[(12, 2)]] = 0                                       # replicate 1 omits that node -> stratum 0 only SILENT
+beta_om, n_om = E.bootstrap_beta(stb, eb, yf, nodeb, Momit, workers=1)
+w0 = Momit[0][nodeb].astype(float); keep0 = stb != 0
+ref_a = E.fit_logit(stb[keep0], eb[keep0], yf[keep0], w0[keep0])["beta"]
+check("D-24 (a): a single-outcome stratum in a replicate is omitted (S-8c); beta* is bit-identical to the fit on the "
+      "informative strata only, and the replicate is counted", math.isfinite(obs_f["beta"]) and beta_om[0] == ref_a
+      and n_om >= 1 and E.fit_logit(stb, eb, yf, w0, omit_single_outcome=True)["omitted_single_outcome_strata"] == [0],
+      f"replicates with an omitted stratum {n_om}")
+# (b) MH with a single-outcome stratum stays valid
+orr_om, n_or_om = E.bootstrap_or(stb, eb < E.XI, yf, nodeb, Momit, Momit.shape[1], 3)
+c0 = E.mh_cells(stb, eb < E.XI, yf, w0, 3).astype(int)
+ex_b = sum(Fraction(int(a) * int(d), int(a + b + c + d)) for a, b, c, d in c0[1:]) / \
+    sum(Fraction(int(b) * int(c), int(a + b + c + d)) for a, b, c, d in c0[1:])
+check("D-24 (b): MH with a single-outcome stratum stays valid: its terms are zero and OR* equals the exact odds ratio "
+      "over the remaining strata", c0[0][1] == 0 and c0[0][3] == 0 and abs(orr_om[0] - float(ex_b)) < 1e-12 * float(ex_b)
+      and n_or_om >= 1)
+# (c) a genuinely undefined MH replicate still stops (numerator > 0, denominator 0; and no positive weight)
+m_c = np.array([[1, 0, 0, 1]])
+msg_c = raises(E.ReplicateFailure, E.bootstrap_or, np.zeros(4, int), np.array([True, True, False, False]),
+               np.array([True, False, True, False]), np.arange(4), m_c, 4, 1)
+msg_c0 = raises(E.ReplicateFailure, E.bootstrap_or, stb, eb < E.XI, yb, nodeb, np.zeros_like(Mb2[:2]), Mb2.shape[1], 3)
+check("D-24 (c): a replicate with sum_i b_i c_i / n_i = 0 still stops ('not evaluable')",
+      msg_c is not None and "not evaluable" in msg_c and msg_c0 is not None and "replicate 1:" in msg_c0)
+# (d) genuine separation by EE within the informative strata still stops
+gd = np.random.Generator(np.random.PCG64(31))
+sd_, ed_, yd_, nd_ = [], [], [], []
+for nd in range(6):
+    for _ in range(12):                                          # stratum 0: node 0 holds every MATCH
+        sd_.append(0); ed_.append(float(gd.random())); yd_.append(nd != 0); nd_.append(nd)
+    for _ in range(20):                                          # stratum 1: EE separates outcomes except at node 1
+        e = float(gd.random()); sd_.append(1); ed_.append(e); yd_.append((e < 0.5) != (nd == 1)); nd_.append(nd)
+sd_, ed_, yd_, nd_ = np.array(sd_), np.array(ed_), np.array(yd_), np.array(nd_)
+obs_d = E.observed_relationship(sd_, ed_, yd_, 2)
+m_d = np.ones((1, 6), dtype=np.int64); m_d[0, [0, 1]] = 0        # stratum 0 single-outcome (omitted), stratum 1 separated
+msg_d = raises(E.ReplicateFailure, E.bootstrap_beta, sd_, ed_, yd_, nd_, m_d, 1)
+check("D-24 (d): genuine separation by EE within the informative strata still stops", math.isfinite(obs_d["beta"])
+      and msg_d is not None and "not evaluable" in msg_d, (msg_d or "NOT RAISED")[:110])
+# (e) no informative stratum stops
+m_e = np.zeros((1, 6), dtype=np.int64); m_e[0, 2] = 1
+keep_e = sd_ == 0
+msg_e = raises(E.ReplicateFailure, E.bootstrap_beta, sd_[keep_e], ed_[keep_e], yd_[keep_e], nd_[keep_e], m_e, 1)
+check("D-24 (e): a replicate with no informative stratum stops (beta not identifiable)",
+      msg_e is not None and "no informative stratum" in msg_e and "not evaluable" in msg_e)
+# (f) no fallback, redraw or substitution
+M_before = Mb2.copy()
+beta_f, n_f = E.bootstrap_beta(stb, eb, yf, nodeb, Mb2, workers=2)
+direct = all(beta_f[b] == E.fit_logit(stb, eb, yf, Mb2[b][nodeb].astype(float), omit_single_outcome=True)["beta"]
+             for b in range(len(Mb2)))
+check("D-24 (f): no fallback or redraw: one beta* per replicate, each equal to a direct fit on its own replicate; the "
+      "draws are unchanged; omission count = replicates lacking node (12, 2); failures name their replicate and stop",
+      len(beta_f) == len(Mb2) and direct and np.array_equal(Mb2, M_before) and n_f == int((Mb2[:, idb[(12, 2)]] == 0).sum())
+      and "replicate 1:" in msg_d and "replicate 1:" in msg_e, f"{n_f} of {len(Mb2)} replicates with an omitted stratum")
+msg_obs = raises(E.ObservedFailure, E.observed_relationship, np.array([0, 0, 1, 1, 1, 1, 1, 1]),
+                 np.array([0.1, 0.9, 0.2, 0.8, 0.25, 0.7, 0.1, 0.9]),
+                 np.array([True, True, True, True, False, False, True, False]), 2)   # MH defined; stratum 0 only SILENT
+check("observed data keep S-13: a single-outcome stratum in the observed data is still a hard stop",
+      msg_obs is not None and "only SILENT or only MATCH" in msg_obs, (msg_obs or "NOT RAISED")[:90])
 
 # 10. S-1..S-4, S-12 characterization --------------------------------------------------------------------------------------
 nd = 200
@@ -452,6 +500,11 @@ if dev:
         check("R-3: every grid value reported for the primary and both secondary k; activity finding = any active at k = 1.5",
               all(len(j1[k]["points"]) == 10 for k in ("primary (k = 1.5)", "secondary (k = 1)", "secondary (k = 2)"))
               and prim["activity_finding"] == any(v["active"] for v in prim["points"].values()))
+        rels = [v["relationship"] for key in ("primary (k = 1.5)", "secondary (k = 1)", "secondary (k = 2)")
+                for v in j1[key]["points"].values() if v["relationship"]]
+        check("D-24 transparency: replicates_with_single_outcome_strata recorded per active point for OR_MH and beta",
+              rels and all(set(r["replicates_with_single_outcome_strata"]) == {"OR_MH", "beta"}
+                           and all(0 <= v <= 20 for v in r["replicates_with_single_outcome_strata"].values()) for r in rels))
         check("R-1c: md5s of every input file per run, frozen files and code recorded",
               all(set(v) == {"stderr.log", f"v1_{k[4:]}.tr", f"v1_{k[4:]}_mobility.csv", "e1_opportunities.csv"}
                   for k, v in j1["provenance"]["inputs_md5"].items()) and len(j1["provenance"]["inputs_md5"]) == 9
@@ -465,9 +518,10 @@ if dev:
           a4.returncode != 0 and a5.returncode == 2 and not os.path.exists(os.path.join(TMP, "prod")), a5.stderr.strip()[-160:])
     a6 = run_("--dev", "--seeds", "1", "--e1-root", r1, "--out", os.path.join(HERE, "devx"), "--B", "20")
     check("development output inside analysis/stageE/oc2 refused", a6.returncode != 0 and not os.path.exists(os.path.join(HERE, "devx")))
-    a7 = run_("--dev", "--seeds", "1", "--e1-root", r1, "--out", os.path.join(TMP, "deg"), "--B", "20")
-    check("S-13b end-to-end: a degenerate replicate stops with 'not evaluable' and writes no result",
-          a7.returncode == 2 and "not evaluable" in a7.stderr and not os.path.exists(os.path.join(TMP, "deg")), a7.stderr.strip()[-160:])
+    a7 = run_("--dev", "--seeds", "1", "--e1-root", r1, "--out", os.path.join(TMP, "one"), "--B", "20")
+    check("D-24 end-to-end (single development seed): no stop caused by a single-outcome stratum in a replicate",
+          a7.returncode == 0 or (a7.returncode == 2 and "only SILENT or only MATCH" not in a7.stderr),
+          f"exit {a7.returncode} " + a7.stderr.strip()[-120:])
     calls = []
     orig = E.bootstrap_multiplicities
     E.bootstrap_multiplicities = lambda *a, **k: (calls.append(1), orig(*a, **k))[1]

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Stage E OC-2 — standalone EAQTE operating characterization (frozen ../OC2_SPEC.md, commit 98bfcf2; D-23).
+"""Stage E OC-2 — standalone EAQTE operating characterization (frozen ../OC2_SPEC.md revision 2, commit a984fc7;
+D-23, D-24).
 
 Offline rescoring of the fixed 40-dB E1 traces (clean seeds 12-21) across the Eb/N0 scoring grid. It does not
 characterize newly simulated network behavior at other Eb/N0 values. Descriptive only: no pass/fail gate, not a
@@ -13,7 +14,11 @@ Implements OC2_SPEC.md exactly:
 - §4  S-1..S-4, S-12; §5 S-5..S-11 (Mantel-Haenszel OR with the S-6a orientation; stratum fixed-effects logistic
       model fitted by IRLS; OC-2's own cluster bootstrap with the E2-8 occurrence-sum rule and one shared draw
       sequence for every (g, k) point and both statistics).
-- §6  S-13 / S-13a / S-13b: every statistical failure stops OC-2; no fallback, substitution, discard or redraw.
+- §6  S-13 / S-13a / S-13b (revision 2, D-24): observed-data failures stop OC-2; in bootstrap replicates a
+      single-outcome stratum is non-informative (S-8c: omitted from that replicate's logistic fit; zero MH terms by
+      formula) and a replicate stops only when the requested statistic itself is non-identifiable or non-finite.
+      No fallback, substitution, discard or redraw. D-24 was fixed from development-only behavior before any OC-2
+      data were read; it is pre-specified, not tuned from real results.
 - §7  P-1 parity harness (C++ log lines used only here, never as OC-2 inputs).
 - §8  R-1/R-1b/R-1c/R-2/R-3: fixed outputs, overwrite refusal, committed-code guard, input md5s.
 Writes <out>/oc2_results.json and <out>/oc2_report.txt; a stop writes no result file and reports to stderr.
@@ -53,7 +58,7 @@ EE_EDGES = np.linspace(0.0, 1.0, 21)                                 # S-12 (bin
 PARITY_EBN0, PARITY_K = 40.0, 1.5                                    # P-1 (C++ compiled values)
 OUT_JSON, OUT_REPORT = "oc2_results.json", "oc2_report.txt"         # R-1
 FROZEN_MD5 = {                                                       # R-1c and §2
-    "analysis/stageE/OC2_SPEC.md": "c0d9344e10dbc7d42b2553ad1b2c0a5d",
+    "analysis/stageE/OC2_SPEC.md": "f0b83d29395972982e7ce34c389b77d7",            # revision 2 (D-24)
     "analysis/stageE/OPTION_C_TRANSITION.md": "a40cfc87d84e67e2c16ca99541d37a4b",
     "analysis/stageE/e1/e1_calibration_rev4.json": "0ca88a0e4c8fc56f63e6b44b496b65fd",
     "analysis/stageE/e1/observer.py": "45d79f770c13f151bddee86b09bf96f6",
@@ -329,9 +334,13 @@ def mh_or(cells):
 
 
 # ---------------------------------------------------------------- S-8/S-8b/S-13a: logistic model ----------------
-def fit_logit(stratum, ee, silent, weights=None):
+def fit_logit(stratum, ee, silent, weights=None, omit_single_outcome=False):
     """logit P(SILENT) = alpha_s + beta EE, one intercept per positive-weight stratum (S-8b), Newton/IRLS from zero,
-    weighted by multiplicities. Raises FitFailure on any S-13a criterion; never regularizes or falls back."""
+    weighted by multiplicities. Observed data (omit_single_outcome=False): a single-outcome stratum is an S-13
+    separation failure. Bootstrap replicates (omit_single_outcome=True, S-8c): a positive-weight single-outcome stratum
+    is non-informative and omitted (its intercept has no finite MLE and its likelihood contribution tends to 1 for every
+    beta); no informative stratum -> beta not identifiable. Raises FitFailure on any S-13a criterion; never
+    regularizes or falls back."""
     w = np.ones(len(ee)) if weights is None else np.asarray(weights, dtype=float)
     pos = w > 0
     s_, e_, y_, w_ = stratum[pos], ee[pos], silent[pos].astype(float), w[pos]
@@ -344,8 +353,18 @@ def fit_logit(stratum, ee, silent, weights=None):
     m = len(present)
     sil = np.bincount(col, weights=w_ * y_, minlength=m)
     tot = np.bincount(col, weights=w_, minlength=m)
-    if np.any(sil == 0) or np.any(sil == tot):
-        raise FitFailure("separation: a positive-weight stratum has only SILENT or only MATCH")
+    single = (sil == 0) | (sil == tot)
+    omitted = [int(v) for v in present[single]]
+    if np.any(single):
+        if not omit_single_outcome:
+            raise FitFailure("separation: a positive-weight stratum has only SILENT or only MATCH")
+        keep = ~single[col]                                              # S-8c: replicate fits only
+        if not np.any(keep):
+            raise FitFailure("no informative stratum: beta not identifiable (S-8c)")
+        s_, e_, y_, w_ = s_[keep], e_[keep], y_[keep], w_[keep]
+        present = np.unique(s_)
+        col = np.searchsorted(present, s_)
+        m = len(present)
     if np.all(e_ == e_[0]):
         raise FitFailure("singular design: EE is constant")
 
@@ -387,7 +406,8 @@ def fit_logit(stratum, ee, silent, weights=None):
         raise FitFailure("separation: a fitted probability is within 1e-12 of 0 or 1")
     if not np.all(np.isfinite(coef)):
         raise FitFailure("non-finite coefficient")
-    return {"beta": float(coef[m]), "alpha": {int(s): float(a) for s, a in zip(present, coef[:m])}, "iterations": it}
+    return {"beta": float(coef[m]), "alpha": {int(s): float(a) for s, a in zip(present, coef[:m])}, "iterations": it,
+            "omitted_single_outcome_strata": omitted}
 
 
 # ---------------------------------------------------------------- S-7/S-7c: bootstrap ---------------------------
@@ -423,14 +443,16 @@ def _beta_chunk(bs):
     for b in bs:
         w = _W["M"][b][_W["node"]].astype(float)
         try:
-            out.append((b, fit_logit(_W["stratum"], _W["ee"], _W["silent"], w)["beta"], None))
+            fit = fit_logit(_W["stratum"], _W["ee"], _W["silent"], w, omit_single_outcome=True)
+            out.append((b, fit["beta"], None, bool(fit["omitted_single_outcome_strata"])))
         except FitFailure as e:
-            out.append((b, None, str(e)))
+            out.append((b, None, str(e), None))
     return out
 
 
 def bootstrap_beta(stratum, ee, silent, node, M, workers=1, chunk=100):
-    """beta* for every replicate (same draws for every point). Results do not depend on `workers`."""
+    """beta* for every replicate (same draws for every point; S-8c in every replicate). Returns (beta*, number of
+    replicates in which S-8c omitted at least one stratum). Results do not depend on `workers`."""
     _W.update({"stratum": stratum, "ee": ee, "silent": silent, "node": node, "M": M})
     chunks = [range(i, min(i + chunk, len(M))) for i in range(0, len(M), chunk)]
     if workers > 1:
@@ -439,15 +461,17 @@ def bootstrap_beta(stratum, ee, silent, node, M, workers=1, chunk=100):
     else:
         parts = [_beta_chunk(c) for c in chunks]
     res = [r for part in parts for r in part]
-    for b, beta, err in res:
+    for b, beta, err, _ in res:
         if err is not None:
             raise ReplicateFailure(f"bootstrap replicate {b + 1}: {err}; the beta interval is not evaluable under the "
                                    "frozen bootstrap specification (S-13b); OC-2 stops (not a substantive finding)")
-    return np.array([r[1] for r in res])
+    return np.array([r[1] for r in res]), int(sum(r[3] for r in res))
 
 
 def bootstrap_or(stratum, exposed, silent, node, M, n_nodes, n_strata):
-    """OR_MH* for every replicate: multiplicity-weighted cells (S-6a) from the shared draws."""
+    """OR_MH* for every replicate: multiplicity-weighted cells (S-6a) from the shared draws. A single-outcome stratum
+    contributes zero terms by the formula (S-6); a replicate stops only if sum_i b_i c_i / n_i = 0 or a value is
+    non-finite (S-13b). Returns (OR_MH*, number of replicates with at least one positive-weight single-outcome stratum)."""
     cnode = mh_cells(node * n_strata + stratum, exposed, silent, None, n_nodes * n_strata)
     rep = (M.astype(float) @ cnode.reshape(n_nodes, n_strata * 4)).reshape(len(M), n_strata, 4)
     num, den = mh_num_den(rep)
@@ -459,7 +483,10 @@ def bootstrap_or(stratum, exposed, silent, node, M, n_nodes, n_strata):
     orr = num / den
     if not np.all(np.isfinite(orr)):
         raise ReplicateFailure("non-finite bootstrap odds ratio; interval not evaluable (S-13b); OC-2 stops")
-    return orr
+    n_s = rep.sum(axis=-1)
+    silent_w = rep[..., 0] + rep[..., 2]
+    single = (n_s > 0) & ((silent_w == 0) | (silent_w == n_s))
+    return orr, int(np.any(single, axis=-1).sum())
 
 
 def interval(values):
@@ -618,10 +645,11 @@ def evaluate(root, seeds, dev, B=B_BOOT, workers=1):
     M, index = bootstrap_multiplicities(S, U, B=B)                        # S-7c: once, shared
     node = np.array([index[(int(s), int(x))] for s, x in zip(data["seed"][ms], data["x"][ms])])
     for kg, e in ee_ms.items():
-        orr = bootstrap_or(stratum, e < XI, silent, node, M, M.shape[1], n_strata)
-        beta = bootstrap_beta(stratum, e, silent, node, M, workers=workers)
+        orr, n_or = bootstrap_or(stratum, e < XI, silent, node, M, M.shape[1], n_strata)
+        beta, n_beta = bootstrap_beta(stratum, e, silent, node, M, workers=workers)
         observed[kg]["OR_MH_interval"] = interval(orr)
         observed[kg]["beta_interval"] = interval(beta)
+        observed[kg]["replicates_with_single_outcome_strata"] = {"OR_MH": n_or, "beta": n_beta}   # S-13b transparency
 
     def table(k):
         return {f"{g:g}": dict(points[(k, g)], relationship=observed.get((k, g))) for g in GRID}
@@ -635,7 +663,7 @@ def evaluate(root, seeds, dev, B=B_BOOT, workers=1):
             "points": table(k), "any_active": any(points[(k, g)]["active"] for g in GRID),
             "relationship": "not evaluable (no active value)" if not rel_k else "reported per active point"}
     return {
-        "spec": "analysis/stageE/OC2_SPEC.md (frozen at commit 98bfcf2; D-23)",
+        "spec": "analysis/stageE/OC2_SPEC.md revision 2 (frozen at commit a984fc7; D-23, D-24)",
         "status": ("DEVELOPMENT ONLY - not OC-2; no finding" if dev else
                    "OC-2 offline operating characterization of the EAQTE environment gate (descriptive only)"),
         "limitation": ("offline rescoring of the fixed 40-dB E1 traces across the Eb/N0 scoring grid; not newly "
@@ -676,7 +704,9 @@ def report(res):
             r = pt["relationship"]
             if r:
                 line += (f"; OR_MH {r['OR_MH']:.4f} [{r['OR_MH_interval'][0]:.4f}, {r['OR_MH_interval'][1]:.4f}]; "
-                         f"beta {r['beta']:.4f} [{r['beta_interval'][0]:.4f}, {r['beta_interval'][1]:.4f}]")
+                         f"beta {r['beta']:.4f} [{r['beta_interval'][0]:.4f}, {r['beta_interval'][1]:.4f}]; "
+                         f"replicates with single-outcome strata: OR {r['replicates_with_single_outcome_strata']['OR_MH']}, "
+                         f"beta {r['replicates_with_single_outcome_strata']['beta']}")
             L.append(line)
     p = res["primary (k = 1.5)"]
     L += ["", f"Activity finding (k = 1.5): {p['activity_finding']}; active values {p['active_values_db']}",
