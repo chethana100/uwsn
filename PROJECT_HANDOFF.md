@@ -1,6 +1,6 @@
 # UASN Trust-Aware HH-VBF — Project Handoff (consolidated)
 
-Last updated: 2026-10-05.
+Last updated: 2026-10-06.
 Sources: Handoff 1 (first chat), Handoff 2 (second chat), and direct inspection of this workspace on 2026-10-02/03/04.
 Companion files: `EXPERIMENT_LOG.md` (every run), `RESEARCH_DECISIONS.md` (every decision).
 
@@ -390,7 +390,10 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
     - **OC-1, Oracle-free evidence and observability characterization:** a synthesis of already-committed evidence (evidence layer, E1 records E-32 to E-34, E2 record E-35 and the observability ceiling); it recomputes nothing.
     - **OC-2, Standalone EAQTE operating characterization:** an offline operating characterization of the EAQTE environment gate by replaying the fixed 40-dB E1 traces from clean seeds 12–21 across the specified Eb/N0 scoring grid. It does not characterize newly simulated network behavior at those Eb/N0 values.
   - **OC-2 is descriptive only:** effect estimates with intervals; not a revived G3/G4 gate, not a security-performance gate and not a secure-routing validation. C-β claims no secure-routing improvement, no G5/G6 validation and no end-to-end PACT improvement; C-γ (a new comparative arm study) is not pursued unless explicitly reopened. No new simulation is required, and seeds 22–31 and 41–50 remain sealed.
-  - **OC-1 and OC-2 have not started:** no OC-2 code, analysis, new runs or outputs exist. The remaining [P] decisions in `OPTION_C_TRANSITION.md` (§7, §11) must be approved before any OC-2 code is written; the code and its tests must then be committed before they read seeds 12–21.
+  - **C-β state (2026-10-06):**
+    - **OC-2:** specification frozen (`OC2_SPEC.md`, D-23, `98bfcf2`; revision 2, D-24, `a984fc7`); evaluator and tests committed before any OC-2 data were read (`aedeb3a`, `6c455b0`). **Evaluation 1 stopped under the frozen S-13b rule and OC-2 produced no result; Evaluation 2 was not run** (E-36, `4dd4962`). The stop is procedural and not a substantive finding; it is final, OC-2 is not continued, and no OC-2 rule was changed in response.
+    - **OC-1: completed** as a written synthesis, `analysis/stageE/OC1_SYNTHESIS.md` (`eebbc86`); it recomputes nothing and draws nothing from OC-2.
+    - Frozen documents keep the status lines written when they were frozen (for example "Not implemented" in `OPTION_C_TRANSITION.md` and `OC2_SPEC.md`, "E2 has not been run" in `E2_SPEC.md`, "No revision-4 code exists yet" in `README.md`). They are not edited; the current state is recorded here and in `RESEARCH_DECISIONS.md`.
   - **Open for any future G5/G6 work:** C-d §4.1 draws nodes for each drawn seed position but states the pair multiplicity as (count of seed) × (count of X within that seed), which is inconsistent when a seed is drawn more than once (recorded in `E2_SPEC.md` §3 and D-20). It requires a separately approved clarification before any future G5/G6 (E4/E5) work. C-d itself is unchanged; E2 did not use C-d §4.1, and C-β (OC-1/OC-2) does not use it.
   - Code state for Stage E: aqua-sim-ng submodule at `41c67c3` (`[RXHDR]` logging only), clean; no other C++ change is permitted during E1–E5 (S2).
   - Frozen specification: `analysis/stageE/README.md` (O1/O2, strata, calibration procedure, bars, gates G1–G6, Eb/N0 grid, attacker configuration, open points, revision log).
