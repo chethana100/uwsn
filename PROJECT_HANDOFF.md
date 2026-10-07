@@ -1,6 +1,6 @@
 # UASN Trust-Aware HH-VBF — Project Handoff (consolidated)
 
-Last updated: 2026-10-06.
+Last updated: 2026-10-07 (Stage F final-evidence promotion, D-27).
 Sources: Handoff 1 (first chat), Handoff 2 (second chat), and direct inspection of this workspace on 2026-10-02/03/04.
 Companion files: `EXPERIMENT_LOG.md` (every run), `RESEARCH_DECISIONS.md` (every decision).
 
@@ -105,6 +105,8 @@ Run indices present in this workspace: 1–20 only (VERIFIED 2026-10-03).
 | **41–50** | **E5 confirmatory (new)** |
 | 1 | Development only |
 | 32–40 | Unused (D-08) |
+
+**Stage F seed use (development runs; recorded 2026-10-07, D-27, E-37):** K2 ran 24 simulations on seeds 33–40 (arms A0/A1/A2). Permanent provenance limitation: "Seeds 33–40 are the best available Stage-F-unused allocation, but their historical global non-use cannot be proven because the earlier 40-seed batch is unavailable." Seed 32 was excluded and not used. F-0d ran new clean counterparts on the already-used seeds 2–11 (plus one determinism repeat). Seeds 22–31 and 41–50 remain sealed/unallocated for the Stage F work described here.
 
 ---
 
@@ -395,6 +397,15 @@ Uninitialized. It differs between identical runs, so traces must be compared wit
     - **OC-1: completed** as a written synthesis, `analysis/stageE/OC1_SYNTHESIS.md` (`eebbc86`); it recomputes nothing and draws nothing from OC-2.
     - Frozen documents keep the status lines written when they were frozen (for example "Not implemented" in `OPTION_C_TRANSITION.md` and `OC2_SPEC.md`, "E2 has not been run" in `E2_SPEC.md`, "No revision-4 code exists yet" in `README.md`). They are not edited; the current state is recorded here and in `RESEARCH_DECISIONS.md`.
   - **Stage E / C-β closed (2026-10-06, D-25):** no methodology or experimental action is approved after OC-1. Not closed by D-25: the C-d §4.1 clarification (next bullet); the "PRE-REBASELINE" wording at `EXPERIMENT_LOG.md` line 6; the legacy items under "Not yet run" and below; persistence of the OC-2 forensic outputs (session scratchpad only; md5s in E-36); pushing (submodule first).
+  - **Stage F final-evidence promotion (2026-10-07, D-27, E-37; documentation-only):** selected Stage F development findings are final evidence **by reference** in `analysis/STAGE_F_FINAL_EVIDENCE_RECORD.md`, each with a status label (DEMONSTRATED / CONDITIONAL / INCONCLUSIVE / DESCRIPTIVE) and allowed thesis wording. The record and its manifest `analysis/STAGE_F_FINAL_EVIDENCE.md5` cite the development artifacts by absolute path and md5. Those artifacts stay outside the repository (`~/uwsn-runs/stageF_dev/`), byte-identical and bannered "DEVELOPMENT-ONLY / NOT FINAL EVIDENCE".
+    - **Promoted:**
+      - K1: freeze condition not reached in the examined traces (DESCRIPTIVE); the T_mac-conditional impossibility statement (CONDITIONAL); absolute impossibility NOT PROVEN (audit result B);
+      - C1: CLOSE C1, with the same-drop result DEMONSTRATED; the cumulative variant stays secondary and outside the decision rule;
+      - K2: INCONCLUSIVE;
+      - the K1/C1 code-audit findings;
+      - code-derived observability limits.
+    - **Not promoted:** F-0/F-1/F-2, F-3, NCSR, RF-A and the Stage F reviews.
+    - **Scope:** no source, trace, result or specification changed; no novelty claim is made (literature review pending); the EAQTE paper is not available on this machine.
   - **Published history rewritten (2026-10-06, D-26):** a co-author trailer was removed from 25 parent and 2 submodule commits; `main` is now `1e8a27a` and aqua-sim-ng `master` is `db72cab`. Contents and results are unchanged. Hashes cited in earlier records refer to the pre-rewrite commits; resolve them with `HISTORY_REWRITE.md`.
   - **Open for any future G5/G6 work:** C-d §4.1 draws nodes for each drawn seed position but states the pair multiplicity as (count of seed) × (count of X within that seed), which is inconsistent when a seed is drawn more than once (recorded in `E2_SPEC.md` §3 and D-20). It requires a separately approved clarification before any future G5/G6 (E4/E5) work. C-d itself is unchanged; E2 did not use C-d §4.1, and C-β (OC-1/OC-2) does not use it.
   - Code state for Stage E: aqua-sim-ng submodule at `41c67c3` (`[RXHDR]` logging only), clean; no other C++ change is permitted during E1–E5 (S2).

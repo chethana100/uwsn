@@ -495,3 +495,26 @@ Diagnostic only; not a performance result.
   - **Draw position:** `numpy.random.Generator(PCG64(12345))`; **1,386** `integers()` calls before replicate 127 (126 × (1 + 10); every U_s nonempty). PCG64 state before replicate 127: state = 209036491850714220398239921685508568665, inc = 268209174141567072605526753992732310247, has_uint32 = 1, uinteger = 3050274532. Seed occurrence vector **[19, 13, 19, 21, 13, 13, 16, 16, 16, 21]**. Per seed (times drawn, |U_s|, distinct X with positive multiplicity, total multiplicity): 13 (3, 25, 24, 75); 16 (3, 27, 27, 81); 19 (2, 21, 18, 42); 21 (2, 26, 22, 52); seeds 12, 14, 15, 17, 18, 20 not drawn. Replaying the generator with the unchanged `draw_replicate` **reproduced the evaluator's multiplicity row exactly**.
   - **Outputs** (session scratchpad, not persistent; see the warning at the top of this log): `oc2_forensic/out/forensic_r127.json` md5 `a1bac44f043ee3ff9a6dd817fc214990`, `oc2_forensic/out/forensic_r127.txt` md5 `d21e9059757ed363c5e6cd0149a34bda` (per-occurrence node draws are in the JSON). Nothing was written to `analysis/stageE/oc2/` or elsewhere in the repository.
   - **Audit: all checks clean.** Only the four frozen inputs of `run_12`–`run_21` were opened (trace); all 90 E1 files unchanged; protected files, evaluator, tests, `OC2_SPEC.md` and `OPTION_C_TRANSITION.md` unchanged; repository status and index identical before and after; no `__pycache__`; no new files under `analysis/`; nothing staged; submodule clean at `41c67c3`; only `python3` and `git` executed; no simulation; Evaluation 2 not run.
+
+## 2026-10-07
+
+### E-37 — Stage F development executions referenced as final evidence (documentation-only; no new run)
+- **Nature:** an evidence-status entry. No experiment, simulation or analysis was run for it (decision D-27). The Stage F executions it references ran on 2026-10-06/07 as development work outside the repository. Their artifacts are unchanged and keep their development-only banners.
+- **Final-evidence record:** `analysis/STAGE_F_FINAL_EVIDENCE_RECORD.md`. Manifest `analysis/STAGE_F_FINAL_EVIDENCE.md5`: 51 entries, all verified at promotion.
+- **Referenced executions:**
+  - **K1:** offline gate-reachability check on 40 existing main-configuration runs (E1 12–21, E2 p075/p100 2–11, F-0d 2–11).
+    - Code `k1_reachability.py` `ae6490ce…`; result `k1.json` `835a429e…`; record `dceb4e24…`.
+    - 271,903 gate evaluations; 0 reached d* = 1,478.9508 m; 0 freezes.
+  - **K2:** 24 new development simulations, seeds 33–40 × A0/A1/A2 (`k2_sims.sh` `05567984…`; run manifest `K2_RUNS.md5` `60dbca6b…`).
+    - Stopped at the pre-check because seed 36 had no attacker drop decision; no metric computed.
+    - INCONCLUSIVE (closure `5b3c0328…`).
+  - **C1:** measurement on the existing E2 traces under the frozen spec `6c53952f…` + Amendment A1 `a4aefcd5…`.
+    - Code `c1_measure.py` `b8c86fea…`; outputs `20821d4d…` / `d5e2c067…` / `36c81158…`, reproduced exactly by a verify run.
+    - Attempt 1 crashed while writing the CSV header after all calculations; it is preserved.
+    - CLOSE C1 (closure `2f753b97…`).
+  - **K1/C1 code audit:** source reading only; result B — NOT PROVEN (`33e3261e…`).
+- **Other Stage F development runs (not promoted):** F-0d new clean counterpart runs on seeds 2–11 plus one determinism repeat (`~/uwsn-runs/stageF_dev/F0d_clean*`). The F-1/F-2, F-3, NCSR and RF-A analyses were offline and development-only.
+- **Integrity:**
+  - repository source unchanged (HEAD `894f3dc`, submodule `db72cab`, clean);
+  - no Stage E record altered;
+  - seeds 22–31 and 41–50 not used by the referenced Stage F executions.
